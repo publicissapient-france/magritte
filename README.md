@@ -1,3 +1,10 @@
-# magritte
+# Magritte
 
-This is not an apple - Deep Learning on mobile device
+Ceci n'est pas une pomme. 
+
+## Introduction 
+
+Embed deep learning on your mobile device.
+
+* `python`: model training related script.
+* `android`: android app.
