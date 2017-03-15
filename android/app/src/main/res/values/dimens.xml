@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="level_circle_size">250dp</dimen>
+    <dimen name="level_icon_size">120dp</dimen>
+</resources>
