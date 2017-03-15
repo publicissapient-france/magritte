@@ -90,3 +90,4 @@ ENV/
 
 *_checkpoint/
 tmp*/
+.DS_STORE/
