@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.os.Trace;
 import android.util.Log;
 
+import org.tensorflow.Operation;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
 import java.io.BufferedReader;
@@ -86,8 +87,7 @@ public class TensorFlowImageClassifier implements Classifier {
             int imageMean,
             float imageStd,
             String inputName,
-            String outputName)
-            throws IOException {
+            String outputName) {
         TensorFlowImageClassifier c = new TensorFlowImageClassifier();
         c.inputName = inputName;
         c.outputName = outputName;
@@ -97,20 +97,28 @@ public class TensorFlowImageClassifier implements Classifier {
         String actualFilename = labelFilename.split("file:///android_asset/")[1];
         Log.i(TAG, "Reading labels from: " + actualFilename);
         BufferedReader br = null;
-        br = new BufferedReader(new InputStreamReader(assetManager.open(actualFilename)));
-        String line;
-        while ((line = br.readLine()) != null) {
-            c.labels.add(line);
+        try {
+            br = new BufferedReader(new InputStreamReader(assetManager.open(actualFilename)));
+            String line;
+            while ((line = br.readLine()) != null) {
+                c.labels.add(line);
+            }
+            br.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Problem reading label file!", e);
         }
-        br.close();
 
         c.inferenceInterface = new TensorFlowInferenceInterface();
         if (c.inferenceInterface.initializeTensorFlow(assetManager, modelFilename) != 0) {
             throw new RuntimeException("TF initialization failed");
         }
         // The shape of the output is [N, NUM_CLASSES], where N is the batch size.
-        int numClasses =
-                (int) c.inferenceInterface.graph().operation(outputName).output(0).shape().size(1);
+        final Operation operation = c.inferenceInterface.graph().operation(outputName);
+        if (operation == null) {
+            throw new RuntimeException("Node '" + outputName + "' does not exist in model '"
+                    + modelFilename + "'");
+        }
+        final int numClasses = (int) operation.output(0).shape().size(1);
         Log.i(TAG, "Read " + c.labels.size() + " labels, output layer size is " + numClasses);
 
         // Ideally, inputSize could have been retrieved from the shape of the input operation.  Alas,
@@ -164,7 +172,7 @@ public class TensorFlowImageClassifier implements Classifier {
 
         // Find the best classifications.
         PriorityQueue<Recognition> pq =
-                new PriorityQueue<>(
+                new PriorityQueue<Recognition>(
                         3,
                         new Comparator<Recognition>() {
                             @Override
