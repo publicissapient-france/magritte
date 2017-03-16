@@ -36,7 +36,6 @@ import java.nio.ByteBuffer;
 import fr.xebia.magritte.env.Logger;
 
 public abstract class CameraActivity extends Activity implements OnImageAvailableListener {
-
     private static final Logger LOGGER = new Logger();
 
     private static final int PERMISSIONS_REQUEST = 1;
