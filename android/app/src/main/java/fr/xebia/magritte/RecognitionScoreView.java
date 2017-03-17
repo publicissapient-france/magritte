@@ -2,7 +2,9 @@ package fr.xebia.magritte;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -25,9 +27,10 @@ public class RecognitionScoreView extends View implements ResultsView {
                 TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
         fgPaint = new Paint();
         fgPaint.setTextSize(textSizePx);
+        fgPaint.setColor(Color.WHITE);
 
         bgPaint = new Paint();
-        bgPaint.setColor(0xcc4285f4);
+        bgPaint.setColor(ContextCompat.getColor(getContext(), R.color.scoreOverlay));
     }
 
     @Override

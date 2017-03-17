@@ -5,6 +5,9 @@
     <color name="colorAccent">#FFA726</color>
     <color name="home_bg">#FCFCFC</color>
     <color name="gray">#4A4A4A</color>
+
     <color name="levelOne">#ffdddd</color>
     <color name="levelTwo">#e2ffdd</color>
+
+    <color name="scoreOverlay">#B3E34361</color>
 </resources>

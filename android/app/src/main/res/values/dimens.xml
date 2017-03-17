@@ -2,4 +2,6 @@
 <resources>
     <dimen name="level_circle_size">250dp</dimen>
     <dimen name="level_icon_size">120dp</dimen>
+    
+    <dimen name="score_overlay_height">120dp</dimen>
 </resources>
