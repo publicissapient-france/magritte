@@ -41,7 +41,7 @@ public class TensorFlowImageClassifier implements Classifier {
         System.loadLibrary("tensorflow_inference");
     }
 
-    private static final String TAG = "TensorFlowImageClassifier";
+    private static final String TAG = TensorFlowImageClassifier.class.getSimpleName();
 
     // Only return this many results with at least this confidence.
     private static final int MAX_RESULTS = 3;
@@ -119,7 +119,8 @@ public class TensorFlowImageClassifier implements Classifier {
                     + modelFilename + "'");
         }
         final int numClasses = (int) operation.output(0).shape().size(1);
-        Log.i(TAG, "Read " + c.labels.size() + " labels, output layer size is " + numClasses);
+        Log.i(TAG, "Read " + c.labels.size() + " labels");
+        Log.i(TAG, "output layer size is " + numClasses);
 
         // Ideally, inputSize could have been retrieved from the shape of the input operation.  Alas,
         // the placeholder node for input in the graphdef typically used does not specify a shape, so it
@@ -172,7 +173,7 @@ public class TensorFlowImageClassifier implements Classifier {
 
         // Find the best classifications.
         PriorityQueue<Recognition> pq =
-                new PriorityQueue<Recognition>(
+                new PriorityQueue<>(
                         3,
                         new Comparator<Recognition>() {
                             @Override
@@ -188,7 +189,7 @@ public class TensorFlowImageClassifier implements Classifier {
                                 "" + i, labels.size() > i ? labels.get(i) : "unknown", outputs[i], null));
             }
         }
-        final ArrayList<Recognition> recognitions = new ArrayList<Recognition>();
+        final ArrayList<Recognition> recognitions = new ArrayList<>();
         int recognitionsSize = Math.min(pq.size(), MAX_RESULTS);
         for (int i = 0; i < recognitionsSize; ++i) {
             recognitions.add(pq.poll());

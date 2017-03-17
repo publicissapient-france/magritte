@@ -28,11 +28,13 @@ import android.media.ImageReader;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.SystemClock;
 import android.os.Trace;
+import android.speech.tts.TextToSpeech;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.Display;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Vector;
 
 import fr.xebia.magritte.OverlayView.DrawCallback;
@@ -95,6 +97,28 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     private BorderedText borderedText;
 
     private long lastProcessingTimeMs;
+
+    private TextToSpeech ttobj;
+
+    @Override
+    public synchronized void onResume() {
+        super.onResume();
+        ttobj = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+            }
+        });
+        ttobj.setLanguage(Locale.US);
+    }
+
+    @Override
+    public synchronized void onPause() {
+        super.onPause();
+        if (ttobj != null) {
+            ttobj.stop();
+            ttobj.shutdown();
+        }
+    }
 
     @Override
     protected int getLayoutId() {
@@ -224,8 +248,10 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                     public void run() {
                         final long startTime = SystemClock.uptimeMillis();
                         final List<Classifier.Recognition> results = classifier.recognizeImage(croppedBitmap);
-                        lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
 
+                        resultToSpeech(results);
+
+                        lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
                         cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
                         resultsView.setResults(results);
                         requestRender();
@@ -234,6 +260,14 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                 });
 
         Trace.endSection();
+    }
+
+    private void resultToSpeech(List<Classifier.Recognition> recognitions) {
+        for (Classifier.Recognition recog : recognitions) {
+            if (recog.getConfidence() > 0.6) {
+                ttobj.speak(recog.getTitle(), TextToSpeech.QUEUE_FLUSH, null);
+            }
+        }
     }
 
     @Override
