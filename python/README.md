@@ -11,7 +11,7 @@ python magritte_training/training/transfer_learning.py --image_dir="your_image_p
 ##### Optimize for inference
 This step will remove all unused operations in the graph
 ```
-python magritte_training/optimize/optimize_for_inference.py --input_model_name="input_model_name.pb" --quantized_model_name="quantized_model_name.pb"
+python magritte_training/optimize/optimize_for_inference.py --input_model_name="input_model_name.pb" --output_model_name="optimized_model_name.pb"
 ```
 
 ##### Quantize the weights

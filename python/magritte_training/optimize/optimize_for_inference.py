@@ -21,7 +21,7 @@ def main(_):
             tf.float32.as_datatype_enum)
 
     # Save the optimized graph
-    f = tf.gfile.FastGFile(FLAGS.quantized_model_name, "w")
+    f = tf.gfile.FastGFile(FLAGS.output_model_name, "w")
     f.write(output_graph_def.SerializeToString())
 
 
@@ -34,9 +34,9 @@ if __name__ == '__main__':
         help='Path to the model.'
     )
     parser.add_argument(
-        '--quantized_model_name',
+        '--output_model_name',
         type=str,
-        default='/tmp/magritte/magritte_model_quantized.pb',
+        default='/tmp/magritte/magritte_model_optimized.pb',
         help='Name of the model to load.'
     )
 
