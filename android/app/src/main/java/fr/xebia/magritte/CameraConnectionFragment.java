@@ -59,7 +59,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import fr.xebia.magritte.env.Logger;
+import org.tensorflow.demo.env.Logger;
 
 public class CameraConnectionFragment extends Fragment {
 

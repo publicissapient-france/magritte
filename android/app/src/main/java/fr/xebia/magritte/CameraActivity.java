@@ -33,7 +33,7 @@ import android.widget.Toast;
 
 import java.nio.ByteBuffer;
 
-import fr.xebia.magritte.env.Logger;
+import org.tensorflow.demo.env.Logger;
 
 public abstract class CameraActivity extends Activity implements OnImageAvailableListener {
     private static final Logger LOGGER = new Logger();

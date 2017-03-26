@@ -38,7 +38,7 @@ import java.util.Vector;
 public class TensorFlowImageClassifier implements Classifier {
 
     static {
-        System.loadLibrary("tensorflow_inference");
+        System.loadLibrary("tensorflow_demo");
     }
 
     private static final String TAG = TensorFlowImageClassifier.class.getSimpleName();
@@ -55,7 +55,7 @@ public class TensorFlowImageClassifier implements Classifier {
     private float imageStd;
 
     // Pre-allocated buffers.
-    private Vector<String> labels = new Vector<String>();
+    private Vector<String> labels = new Vector<>();
     private int[] intValues;
     private float[] floatValues;
     private float[] outputs;

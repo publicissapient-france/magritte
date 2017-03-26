@@ -38,9 +38,9 @@ import java.util.Locale;
 import java.util.Vector;
 
 import fr.xebia.magritte.OverlayView.DrawCallback;
-import fr.xebia.magritte.env.BorderedText;
-import fr.xebia.magritte.env.ImageUtils;
-import fr.xebia.magritte.env.Logger;
+import org.tensorflow.demo.env.BorderedText;
+import org.tensorflow.demo.env.ImageUtils;
+import org.tensorflow.demo.env.Logger;
 
 public class ClassifierActivity extends CameraActivity implements OnImageAvailableListener {
     private static final Logger LOGGER = new Logger();
@@ -216,12 +216,13 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                     yuvBytes[0],
                     yuvBytes[1],
                     yuvBytes[2],
+                    rgbBytes,
                     previewWidth,
                     previewHeight,
                     yRowStride,
                     uvRowStride,
                     uvPixelStride,
-                    rgbBytes);
+                    false);
 
             image.close();
         } catch (final Exception e) {
