@@ -19,10 +19,6 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.os.Trace;
 import android.util.Log;
-
-import org.tensorflow.Operation;
-import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,17 +27,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Vector;
+import org.tensorflow.Operation;
+import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
-/**
- * A classifier specialized to label images using TensorFlow.
- */
+/** A classifier specialized to label images using TensorFlow. */
 public class TensorFlowImageClassifier implements Classifier {
-
     static {
         System.loadLibrary("tensorflow_demo");
     }
 
-    private static final String TAG = TensorFlowImageClassifier.class.getSimpleName();
+    private static final String TAG = "TensorFlowImageClassifier";
 
     // Only return this many results with at least this confidence.
     private static final int MAX_RESULTS = 3;
@@ -55,28 +50,29 @@ public class TensorFlowImageClassifier implements Classifier {
     private float imageStd;
 
     // Pre-allocated buffers.
-    private Vector<String> labels = new Vector<>();
+    private Vector<String> labels = new Vector<String>();
     private int[] intValues;
     private float[] floatValues;
     private float[] outputs;
     private String[] outputNames;
 
+    private boolean logStats = false;
+
     private TensorFlowInferenceInterface inferenceInterface;
 
-    private TensorFlowImageClassifier() {
-    }
+    private TensorFlowImageClassifier() {}
 
     /**
      * Initializes a native TensorFlow session for classifying images.
      *
-     * @param assetManager  The asset manager to be used to load assets.
+     * @param assetManager The asset manager to be used to load assets.
      * @param modelFilename The filepath of the model GraphDef protocol buffer.
      * @param labelFilename The filepath of label file for classes.
-     * @param inputSize     The input size. A square image of inputSize x inputSize is assumed.
-     * @param imageMean     The assumed mean of the image values.
-     * @param imageStd      The assumed std of the image values.
-     * @param inputName     The label of the image input node.
-     * @param outputName    The label of the output node.
+     * @param inputSize The input size. A square image of inputSize x inputSize is assumed.
+     * @param imageMean The assumed mean of the image values.
+     * @param imageStd The assumed std of the image values.
+     * @param inputName The label of the image input node.
+     * @param outputName The label of the output node.
      * @throws IOException
      */
     public static Classifier create(
@@ -105,22 +101,15 @@ public class TensorFlowImageClassifier implements Classifier {
             }
             br.close();
         } catch (IOException e) {
-            throw new RuntimeException("Problem reading label file!", e);
+            throw new RuntimeException("Problem reading label file!" , e);
         }
 
-        c.inferenceInterface = new TensorFlowInferenceInterface();
-        if (c.inferenceInterface.initializeTensorFlow(assetManager, modelFilename) != 0) {
-            throw new RuntimeException("TF initialization failed");
-        }
+        c.inferenceInterface = new TensorFlowInferenceInterface(assetManager, modelFilename);
+
         // The shape of the output is [N, NUM_CLASSES], where N is the batch size.
-        final Operation operation = c.inferenceInterface.graph().operation(outputName);
-        if (operation == null) {
-            throw new RuntimeException("Node '" + outputName + "' does not exist in model '"
-                    + modelFilename + "'");
-        }
+        final Operation operation = c.inferenceInterface.graphOperation(outputName);
         final int numClasses = (int) operation.output(0).shape().size(1);
-        Log.i(TAG, "Read " + c.labels.size() + " labels");
-        Log.i(TAG, "output layer size is " + numClasses);
+        Log.i(TAG, "Read " + c.labels.size() + " labels, output layer size is " + numClasses);
 
         // Ideally, inputSize could have been retrieved from the shape of the input operation.  Alas,
         // the placeholder node for input in the graphdef typically used does not specify a shape, so it
@@ -130,7 +119,7 @@ public class TensorFlowImageClassifier implements Classifier {
         c.imageStd = imageStd;
 
         // Pre-allocate buffers.
-        c.outputNames = new String[]{outputName};
+        c.outputNames = new String[] {outputName};
         c.intValues = new int[inputSize * inputSize];
         c.floatValues = new float[inputSize * inputSize * 3];
         c.outputs = new float[numClasses];
@@ -156,24 +145,23 @@ public class TensorFlowImageClassifier implements Classifier {
         Trace.endSection();
 
         // Copy the input data into TensorFlow.
-        Trace.beginSection("fillNodeFloat");
-        inferenceInterface.fillNodeFloat(
-                inputName, new int[]{1, inputSize, inputSize, 3}, floatValues);
+        Trace.beginSection("feed");
+        inferenceInterface.feed(inputName, floatValues, 1, inputSize, inputSize, 3);
         Trace.endSection();
 
         // Run the inference call.
-        Trace.beginSection("runInference");
-        inferenceInterface.runInference(outputNames);
+        Trace.beginSection("run");
+        inferenceInterface.run(outputNames, logStats);
         Trace.endSection();
 
         // Copy the output Tensor back into the output array.
-        Trace.beginSection("readNodeFloat");
-        inferenceInterface.readNodeFloat(outputName, outputs);
+        Trace.beginSection("fetch");
+        inferenceInterface.fetch(outputName, outputs);
         Trace.endSection();
 
         // Find the best classifications.
         PriorityQueue<Recognition> pq =
-                new PriorityQueue<>(
+                new PriorityQueue<Recognition>(
                         3,
                         new Comparator<Recognition>() {
                             @Override
@@ -189,7 +177,7 @@ public class TensorFlowImageClassifier implements Classifier {
                                 "" + i, labels.size() > i ? labels.get(i) : "unknown", outputs[i], null));
             }
         }
-        final ArrayList<Recognition> recognitions = new ArrayList<>();
+        final ArrayList<Recognition> recognitions = new ArrayList<Recognition>();
         int recognitionsSize = Math.min(pq.size(), MAX_RESULTS);
         for (int i = 0; i < recognitionsSize; ++i) {
             recognitions.add(pq.poll());
@@ -199,8 +187,8 @@ public class TensorFlowImageClassifier implements Classifier {
     }
 
     @Override
-    public void enableStatLogging(boolean debug) {
-        inferenceInterface.enableStatLogging(debug);
+    public void enableStatLogging(boolean logStats) {
+        this.logStats = logStats;
     }
 
     @Override
