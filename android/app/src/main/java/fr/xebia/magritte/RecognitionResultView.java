@@ -56,7 +56,7 @@ public class RecognitionResultView extends RelativeLayout implements ResultsView
     }
 
     @Override
-    public void setTopMatch(Classifier.Recognition recognition) {
+    public void displayTopMatch(Classifier.Recognition recognition) {
         try {
             Fruit fruit = Fruit.valueOf(recognition.getTitle().toUpperCase());
             switch (fruit) {

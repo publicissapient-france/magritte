@@ -20,60 +20,42 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Typeface;
 import android.media.Image;
 import android.media.Image.Plane;
 import android.media.ImageReader;
 import android.media.ImageReader.OnImageAvailableListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Trace;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.util.Size;
-import android.util.TypedValue;
 import android.view.Display;
 
-import org.tensorflow.demo.env.BorderedText;
 import org.tensorflow.demo.env.ImageUtils;
 import org.tensorflow.demo.env.Logger;
 
 import java.util.List;
-import java.util.Locale;
 
-public class ClassifierActivity extends CameraActivity implements OnImageAvailableListener {
+import fr.xebia.magritte.model.ClassifierContract;
+
+public class ClassifierActivity extends CameraActivity implements OnImageAvailableListener,
+        ClassifierContract.View {
     private static final Logger LOGGER = new Logger();
 
-    // These are the settings for the original v1 Inception model. If you want to
-    // use a model that's been produced from the TensorFlow for Poets codelab,
-    // you'll need to set IMAGE_SIZE = 299, IMAGE_MEAN = 128, IMAGE_STD = 128,
-    // INPUT_NAME = "Mul", and OUTPUT_NAME = "final_result".
-    // You'll also need to update the MODEL_FILE and LABEL_FILE paths to point to
-    // the ones you produced.
-    //
-    // To use v3 Inception model, strip the DecodeJpeg Op from your retrained
-    // model first:
-    //
-    // python strip_unused.py \
-    // --input_graph=<retrained-pb-file> \
-    // --output_graph=<your-stripped-pb-file> \
-    // --input_node_names="Mul" \
-    // --output_node_names="final_result" \
-    // --input_binary=true
     private static final int INPUT_SIZE = 299;
     private static final int IMAGE_MEAN = 128;
     private static final float IMAGE_STD = 128;
     private static final String INPUT_NAME = "Mul";
-    private static final String OUTPUT_NAME = "final_result";
+    private static final String OUTPUT_NAME_FRUITS = "final_result_fruits";
+    private static final String OUTPUT_NAME_VEGETABLES = "final_result_vegetables";
 
-    private static final String FRUIT_MODEL_FILE = "file:///android_asset/magritte_fruit_model.pb";
-    private static final String FRUIT_LABEL_FILE = "file:///android_asset/magritte_fruit_label.txt";
-    private static final String VEGETABLE_MODEL_FILE = "file:///android_asset/magritte_vegetable_model.pb";
-    private static final String VEGETABLE_LABEL_FILE = "file:///android_asset/magritte_vegetable_label.txt";
+    private static final String MODEL_FILE = "file:///android_asset/magritte_model.pb";
+    private static final String LABELS_FRUITS = "file:///android_asset/magritte_labels_fruits.txt";
+    private static final String LABELS_VEGETABLES = "file:///android_asset/magritte_labels_vegetables.txt";
 
     private static final boolean SAVE_PREVIEW_BITMAP = false;
     private static final boolean MAINTAIN_ASPECT = true;
-    private static final double MATCH_THRESHOLD = 0.6;
-
-    private Classifier classifier;
 
     private Integer sensorOrientation;
 
@@ -84,8 +66,6 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     private Bitmap rgbFrameBitmap = null;
     private Bitmap croppedBitmap = null;
 
-    private Bitmap cropCopyBitmap;
-
     private boolean computing = false;
 
     private Matrix frameToCropTransform;
@@ -93,12 +73,10 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
 
     private ResultsView resultsView;
 
-    private BorderedText borderedText;
-
-    private TextToSpeech ttobj;
     private int currentMode;
-    private String modelfileName;
-    private String labelfileName;
+    private TextToSpeech tts;
+
+    private ClassifierContract.Presenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,33 +85,53 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         if (bundle != null) {
             currentMode = bundle.getInt(LevelActivity.MODEL_TYPE);
         }
-        if (currentMode == 0) {
-            modelfileName = FRUIT_MODEL_FILE;
-            labelfileName = FRUIT_LABEL_FILE;
-        } else {
-            modelfileName = VEGETABLE_MODEL_FILE;
-            labelfileName = VEGETABLE_LABEL_FILE;
-        }
-    }
+        String modelfileName = MODEL_FILE;
+        String labelfileName;
+        String outputName;
+        final int levelPhrase;
 
-    @Override
-    public synchronized void onResume() {
-        super.onResume();
-        ttobj = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+        if (currentMode == 0) {
+            labelfileName = LABELS_FRUITS;
+            outputName = OUTPUT_NAME_FRUITS;
+            levelPhrase = R.string.learn_fruit;
+        } else {
+            labelfileName = LABELS_VEGETABLES;
+            outputName = OUTPUT_NAME_VEGETABLES;
+            levelPhrase = R.string.learn_vegetable;
+        }
+
+        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    // TODO say hello in chosen language
+                    speak(getString(levelPhrase));
+                } else {
+                    Log.e("TTS", "Initilization Failed!");
+                }
             }
         });
-        ttobj.setLanguage(Locale.US);
+
+        Classifier classifier = TensorFlowImageClassifier.create(
+                getAssets(),
+                modelfileName,
+                labelfileName,
+                INPUT_SIZE,
+                IMAGE_MEAN,
+                IMAGE_STD,
+                INPUT_NAME,
+                outputName);
+
+        presenter = new ClassifierPresenter(this, classifier);
     }
 
     @Override
-    public synchronized void onPause() {
-        super.onPause();
-        if (ttobj != null) {
-            ttobj.stop();
-            ttobj.shutdown();
+    public void onDestroy() {
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
         }
+        super.onDestroy();
     }
 
     @Override
@@ -146,27 +144,8 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         return INPUT_SIZE;
     }
 
-    private static final float TEXT_SIZE_DIP = 10;
-
     @Override
     public void onPreviewSizeChosen(final Size size, final int rotation) {
-        final float textSizePx =
-                TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
-        borderedText = new BorderedText(textSizePx);
-        borderedText.setTypeface(Typeface.MONOSPACE);
-
-        classifier =
-                TensorFlowImageClassifier.create(
-                        getAssets(),
-                        modelfileName,
-                        labelfileName,
-                        INPUT_SIZE,
-                        IMAGE_MEAN,
-                        IMAGE_STD,
-                        INPUT_NAME,
-                        OUTPUT_NAME);
-
         resultsView = (ResultsView) findViewById(R.id.results);
         previewWidth = size.getWidth();
         previewHeight = size.getHeight();
@@ -251,44 +230,31 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
             ImageUtils.saveBitmap(croppedBitmap);
         }
 
-        runInBackground(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        final List<Classifier.Recognition> results = classifier.recognizeImage(croppedBitmap);
-                        final Classifier.Recognition topMatch = getTopMatch(results);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                resultsView.displayResults(results);
-                            }
-                        });
-                        if (topMatch != null) {
-                            speakResult(topMatch);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    resultsView.setTopMatch(topMatch);
-                                }
-                            });
-                        }
-                        computing = false;
-                    }
-                });
-
+        presenter.recognizeImage(croppedBitmap);
         Trace.endSection();
     }
 
-    private Classifier.Recognition getTopMatch(List<Classifier.Recognition> recognitions) {
-        for (Classifier.Recognition recog : recognitions) {
-            if (recog.getConfidence() > MATCH_THRESHOLD) {
-                return recog;
-            }
-        }
-        return null;
+    @Override
+    public void displayRecognitions(List<Classifier.Recognition> recognitionList) {
+        resultsView.displayResults(recognitionList);
+        computing = false;
     }
 
-    private void speakResult(Classifier.Recognition recognition) {
-        ttobj.speak(recognition.getTitle(), TextToSpeech.QUEUE_FLUSH, null);
+    @Override
+    public void displayTopMatch(Classifier.Recognition recognition) {
+        resultsView.displayTopMatch(recognition);
+    }
+
+    @Override
+    public void speakResult(String title) {
+        speak(title);
+    }
+
+    private void speak(String text) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+        } else {
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        }
     }
 }

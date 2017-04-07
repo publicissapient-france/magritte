@@ -21,5 +21,5 @@ public interface ResultsView {
 
     void displayResults(List<Classifier.Recognition> recognitions);
 
-    void setTopMatch(Classifier.Recognition recognition);
+    void displayTopMatch(Classifier.Recognition recognition);
 }

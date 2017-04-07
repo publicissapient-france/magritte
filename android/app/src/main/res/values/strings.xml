@@ -23,4 +23,6 @@
 
     <string name="start">Let\'s Start</string>
     <string name="result">Result: %1$s Confidence: %2$f\n</string>
+    <string name="learn_fruit">Let\'s learn to say the name of some fruits!</string>
+    <string name="learn_vegetable">Let\'s learn to say the name of some vegetables!</string>
 </resources>
