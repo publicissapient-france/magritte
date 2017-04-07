@@ -152,7 +152,8 @@ def create_inception_graph(model_dir, bottleneck_tensor_name, jpeg_data_tensor_n
     manipulating.
   """
     with tf.Session() as sess:
-        model_filename = os.path.join(model_dir, 'classify_image_graph_def.pb')
+        #model_filename = os.path.join(model_dir, 'classify_image_graph_def.pb')
+        model_filename = model_dir
 
         with gfile.FastGFile(model_filename, 'rb') as f:
             graph_def = tf.GraphDef()
@@ -605,7 +606,7 @@ def add_final_training_ops(class_count, final_tensor_name, bottleneck_tensor, le
             tf.summary.histogram('pre_activations', logits)
 
     final_tensor = tf.nn.softmax(logits, name=final_tensor_name)
-    tf.summary.histogram('activations', final_tensor)
+    tf.summary.histogram('activations_' + final_tensor_name, final_tensor)
 
     with tf.name_scope('cross_entropy'):
         cross_entropy = tf.nn.softmax_cross_entropy_with_logits(

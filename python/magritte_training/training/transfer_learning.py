@@ -84,9 +84,9 @@ def main(_):
     tf.gfile.MakeDirs(FLAGS.summaries_dir)
 
     # Set up the pre-trained graph.
-    maybe_download_and_extract(FLAGS.model_dir, DATA_URL)
+    # maybe_download_and_extract(FLAGS.model_path, DATA_URL)
     graph, bottleneck_tensor, jpeg_data_tensor, resized_image_tensor = (
-        create_inception_graph(FLAGS.model_dir, BOTTLENECK_TENSOR_NAME, JPEG_DATA_TENSOR_NAME, RESIZED_INPUT_TENSOR_NAME))
+        create_inception_graph(FLAGS.model_path, BOTTLENECK_TENSOR_NAME, JPEG_DATA_TENSOR_NAME, RESIZED_INPUT_TENSOR_NAME))
 
     # Look at the folder structure, and create lists of all the images.
     image_lists = create_image_lists(FLAGS.image_dir, FLAGS.testing_percentage,
@@ -143,7 +143,7 @@ def main(_):
     sess.run(init)
 
     # NEW
-    tf.train.write_graph(sess.graph_def, '.', 'tfdroid.pbtxt')
+    # tf.train.write_graph(sess.graph_def, '.', 'tfdroid.pbtxt')
     # END NEW
 
     # Run the training for as many cycles as requested on the command line.
@@ -212,7 +212,10 @@ def main(_):
                                     list(image_lists.keys())[predictions[i]]))
 
     # Write out the trained graph and labels with the weights stored as constants.
-    output_graph_def = graph_util.convert_variables_to_constants(sess, graph.as_graph_def(), [FLAGS.final_tensor_name])
+    # output_graph_def = graph_util.convert_variables_to_constants(sess, graph.as_graph_def(), [FLAGS.final_tensor_name])
+    output_graph_def = graph_util.convert_variables_to_constants(sess,
+                                                                 graph.as_graph_def(),
+                                                                 FLAGS.all_final_tensors_names_list.split(","))
 
     with gfile.FastGFile(FLAGS.output_graph, 'wb') as f:
         f.write(output_graph_def.SerializeToString())
@@ -220,7 +223,7 @@ def main(_):
         f.write('\n'.join(image_lists.keys()) + '\n')
 
     # NEW
-    saver.save(sess, 'tfdroid.ckpt')
+    #saver.save(sess, 'tfdroid.ckpt')
     # END NEW
 
 
@@ -251,7 +254,7 @@ if __name__ == '__main__':
         help='Where to save summary logs for TensorBoard.'
     )
     parser.add_argument(
-        '--model_dir',
+        '--model_path',
         type=str,
         default='/tmp/imagenet',
         help="""\
@@ -272,6 +275,14 @@ if __name__ == '__main__':
         default='final_result',
         help="""\
       The name of the output classification layer in the retrained graph.\
+      """
+    )
+    parser.add_argument(
+        '--all_final_tensors_names_list',
+        type=str,
+        default='final_result',
+        help="""\
+      The name of all the output classification layers in the retrained graph, comma separated.\
       """
     )
     parser.add_argument(
