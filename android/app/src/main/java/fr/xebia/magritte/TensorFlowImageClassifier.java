@@ -161,7 +161,7 @@ public class TensorFlowImageClassifier implements Classifier {
 
         // Find the best classifications.
         PriorityQueue<Recognition> pq =
-                new PriorityQueue<Recognition>(
+                new PriorityQueue<>(
                         3,
                         new Comparator<Recognition>() {
                             @Override
@@ -177,7 +177,7 @@ public class TensorFlowImageClassifier implements Classifier {
                                 "" + i, labels.size() > i ? labels.get(i) : "unknown", outputs[i], null));
             }
         }
-        final ArrayList<Recognition> recognitions = new ArrayList<Recognition>();
+        final ArrayList<Recognition> recognitions = new ArrayList<>();
         int recognitionsSize = Math.min(pq.size(), MAX_RESULTS);
         for (int i = 0; i < recognitionsSize; ++i) {
             recognitions.add(pq.poll());

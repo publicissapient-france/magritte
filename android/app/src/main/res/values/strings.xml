@@ -15,10 +15,12 @@
 -->
 <resources>
     <string name="app_name">Magritte</string>
+    <string name="app_slogan">Ceci n\'est pas une pomme.</string>
+
     <string name="description_info">Info</string>
     <string name="request_permission">This sample needs camera permission.</string>
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
 
     <string name="start">Let\'s Start</string>
-    <string name="app_slogan">Ceci n\'est pas une pomme.</string>
+    <string name="result">Result: %1$s Confidence: %2$f\n</string>
 </resources>

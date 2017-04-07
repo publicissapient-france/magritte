@@ -17,9 +17,9 @@ package fr.xebia.magritte;
 
 import java.util.List;
 
-import fr.xebia.magritte.Classifier.Recognition;
-
 public interface ResultsView {
 
-    void setResults(final List<Recognition> results);
+    void displayResults(List<Classifier.Recognition> recognitions);
+
+    void setTopMatch(Classifier.Recognition recognition);
 }

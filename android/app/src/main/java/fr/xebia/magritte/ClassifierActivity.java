@@ -20,27 +20,24 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.media.Image;
 import android.media.Image.Plane;
 import android.media.ImageReader;
 import android.media.ImageReader.OnImageAvailableListener;
-import android.os.SystemClock;
+import android.os.Bundle;
 import android.os.Trace;
 import android.speech.tts.TextToSpeech;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.Display;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Vector;
-
-import fr.xebia.magritte.OverlayView.DrawCallback;
 import org.tensorflow.demo.env.BorderedText;
 import org.tensorflow.demo.env.ImageUtils;
 import org.tensorflow.demo.env.Logger;
+
+import java.util.List;
+import java.util.Locale;
 
 public class ClassifierActivity extends CameraActivity implements OnImageAvailableListener {
     private static final Logger LOGGER = new Logger();
@@ -67,12 +64,14 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     private static final String INPUT_NAME = "Mul";
     private static final String OUTPUT_NAME = "final_result";
 
-    private static final String MODEL_FILE = "file:///android_asset/magritte_model.pb";
-    private static final String LABEL_FILE = "file:///android_asset/magritte_labels.txt";
+    private static final String FRUIT_MODEL_FILE = "file:///android_asset/magritte_fruit_model.pb";
+    private static final String FRUIT_LABEL_FILE = "file:///android_asset/magritte_fruit_label.txt";
+    private static final String VEGETABLE_MODEL_FILE = "file:///android_asset/magritte_vegetable_model.pb";
+    private static final String VEGETABLE_LABEL_FILE = "file:///android_asset/magritte_vegetable_label.txt";
 
     private static final boolean SAVE_PREVIEW_BITMAP = false;
-
     private static final boolean MAINTAIN_ASPECT = true;
+    private static final double MATCH_THRESHOLD = 0.6;
 
     private Classifier classifier;
 
@@ -96,9 +95,26 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
 
     private BorderedText borderedText;
 
-    private long lastProcessingTimeMs;
-
     private TextToSpeech ttobj;
+    private int currentMode;
+    private String modelfileName;
+    private String labelfileName;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            currentMode = bundle.getInt(LevelActivity.MODEL_TYPE);
+        }
+        if (currentMode == 0) {
+            modelfileName = FRUIT_MODEL_FILE;
+            labelfileName = FRUIT_LABEL_FILE;
+        } else {
+            modelfileName = VEGETABLE_MODEL_FILE;
+            labelfileName = VEGETABLE_LABEL_FILE;
+        }
+    }
 
     @Override
     public synchronized void onResume() {
@@ -122,7 +138,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
 
     @Override
     protected int getLayoutId() {
-        return R.layout.camera_connection_fragment;
+        return R.layout.camera_fragment;
     }
 
     @Override
@@ -143,8 +159,8 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         classifier =
                 TensorFlowImageClassifier.create(
                         getAssets(),
-                        MODEL_FILE,
-                        LABEL_FILE,
+                        modelfileName,
+                        labelfileName,
                         INPUT_SIZE,
                         IMAGE_MEAN,
                         IMAGE_STD,
@@ -177,14 +193,6 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         frameToCropTransform.invert(cropToFrameTransform);
 
         yuvBytes = new byte[3][];
-
-        addCallback(
-                new DrawCallback() {
-                    @Override
-                    public void drawCallback(final Canvas canvas) {
-                        renderDebug(canvas);
-                    }
-                });
     }
 
     @Override
@@ -247,15 +255,23 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                 new Runnable() {
                     @Override
                     public void run() {
-                        final long startTime = SystemClock.uptimeMillis();
                         final List<Classifier.Recognition> results = classifier.recognizeImage(croppedBitmap);
-
-                        resultToSpeech(results);
-
-                        lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
-                        cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
-                        resultsView.setResults(results);
-                        requestRender();
+                        final Classifier.Recognition topMatch = getTopMatch(results);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                resultsView.displayResults(results);
+                            }
+                        });
+                        if (topMatch != null) {
+                            speakResult(topMatch);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    resultsView.setTopMatch(topMatch);
+                                }
+                            });
+                        }
                         computing = false;
                     }
                 });
@@ -263,49 +279,16 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         Trace.endSection();
     }
 
-    private void resultToSpeech(List<Classifier.Recognition> recognitions) {
+    private Classifier.Recognition getTopMatch(List<Classifier.Recognition> recognitions) {
         for (Classifier.Recognition recog : recognitions) {
-            if (recog.getConfidence() > 0.6) {
-                ttobj.speak(recog.getTitle(), TextToSpeech.QUEUE_FLUSH, null);
+            if (recog.getConfidence() > MATCH_THRESHOLD) {
+                return recog;
             }
         }
+        return null;
     }
 
-    @Override
-    public void onSetDebug(boolean debug) {
-        classifier.enableStatLogging(debug);
-    }
-
-    private void renderDebug(final Canvas canvas) {
-        if (!isDebug()) {
-            return;
-        }
-        final Bitmap copy = cropCopyBitmap;
-        if (copy != null) {
-            final Matrix matrix = new Matrix();
-            final float scaleFactor = 2;
-            matrix.postScale(scaleFactor, scaleFactor);
-            matrix.postTranslate(
-                    canvas.getWidth() - copy.getWidth() * scaleFactor,
-                    canvas.getHeight() - copy.getHeight() * scaleFactor);
-            canvas.drawBitmap(copy, matrix, new Paint());
-
-            final Vector<String> lines = new Vector<String>();
-            if (classifier != null) {
-                String statString = classifier.getStatString();
-                String[] statLines = statString.split("\n");
-                for (String line : statLines) {
-                    lines.add(line);
-                }
-            }
-
-            lines.add("Frame: " + previewWidth + "x" + previewHeight);
-            lines.add("Crop: " + copy.getWidth() + "x" + copy.getHeight());
-            lines.add("View: " + canvas.getWidth() + "x" + canvas.getHeight());
-            lines.add("Rotation: " + sensorOrientation);
-            lines.add("Inference time: " + lastProcessingTimeMs + "ms");
-
-            borderedText.drawLines(canvas, 10, canvas.getHeight() - 10, lines);
-        }
+    private void speakResult(Classifier.Recognition recognition) {
+        ttobj.speak(recognition.getTitle(), TextToSpeech.QUEUE_FLUSH, null);
     }
 }

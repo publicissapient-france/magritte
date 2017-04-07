@@ -14,6 +14,10 @@ import permissions.dispatcher.RuntimePermissions;
 @RuntimePermissions
 public class LevelActivity extends AppCompatActivity {
 
+    public static final String MODEL_TYPE = "MODEL_TYPE";
+    public static final int MODEL_FRUIT = 0;
+    public static final int MODEL_VEGETABLE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,7 +27,12 @@ public class LevelActivity extends AppCompatActivity {
 
     @OnClick(R.id.level_one)
     public void onLevelOneClick() {
-        LevelActivityPermissionsDispatcher.startClassifierWithCheck(this);
+        LevelActivityPermissionsDispatcher.startClassifierWithCheck(this, MODEL_FRUIT);
+    }
+
+    @OnClick(R.id.level_two)
+    public void onLevelTwoClick() {
+        LevelActivityPermissionsDispatcher.startClassifierWithCheck(this, MODEL_VEGETABLE);
     }
 
     @Override
@@ -33,7 +42,9 @@ public class LevelActivity extends AppCompatActivity {
     }
 
     @NeedsPermission({Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE})
-    void startClassifier() {
-        startActivity(new Intent(this, ClassifierActivity.class));
+    void startClassifier(int modelType) {
+        Intent intent = new Intent(this, ClassifierActivity.class);
+        intent.putExtra(MODEL_TYPE, modelType);
+        startActivity(intent);
     }
 }

@@ -276,8 +276,8 @@ public class CameraConnectionFragment extends Fragment {
         final int minHeight = Math.max(height, MINIMUM_PREVIEW_SIZE);
 
         // Collect the supported resolutions that are at least as big as the preview Surface
-        final List<Size> bigEnough = new ArrayList<Size>();
-        final List<Size> tooSmall = new ArrayList<Size>();
+        final List<Size> bigEnough = new ArrayList<>();
+        final List<Size> tooSmall = new ArrayList<>();
         for (final Size option : choices) {
             if (option.getHeight() >= minHeight && option.getWidth() >= minWidth) {
                 bigEnough.add(option);
