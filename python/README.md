@@ -17,5 +17,5 @@ python magritte_training/optimize/optimize_for_inference.py --input_model_name="
 ##### Quantize the weights
 Quantize the float weights to eight-bits to shrink the model size
 ```
-python magritte_training/optimize/quantize.py --input="your_input_model.pb" --output_node_names="final_result" --output="your_output_model.pb" --mode=eightbit
+python magritte_training/optimize/quantize.py --input="your_input_model.pb" --output_node_names="final_result" --output="your_output_model.pb" --mode=weights
 ```
