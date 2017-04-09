@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="fr.xebia.magritte.LanguageActivity">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.02" />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/choice_fr"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/card_spacing"
+        android:layout_marginLeft="@dimen/card_spacing"
+        android:layout_marginRight="@dimen/card_spacing"
+        android:layout_marginTop="@dimen/card_spacing"
+        app:cardBackgroundColor="@color/colorFrance"
+        app:cardCornerRadius="@dimen/card_radius"
+        app:layout_constraintBottom_toBottomOf="@+id/guideline_one"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline_top">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/icon_fr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/card_icon_spacing"
+                android:layout_marginStart="@dimen/card_icon_spacing"
+                android:src="@drawable/ic_france_symbol" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/icon_fr"
+                android:layout_toRightOf="@+id/icon_fr"
+                android:gravity="center"
+                android:text="@string/french"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/language_title_size"
+                android:textStyle="bold" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="@dimen/progress_spacing"
+                android:layout_marginRight="@dimen/progress_spacing"
+                android:text="@string/init_progress"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/progress_label_size" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline_one"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.34" />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/choice_cn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/card_spacing"
+        android:layout_marginLeft="@dimen/card_spacing"
+        android:layout_marginRight="@dimen/card_spacing"
+        android:layout_marginTop="@dimen/card_spacing"
+        app:cardBackgroundColor="@color/colorChina"
+        app:cardCornerRadius="@dimen/card_radius"
+        app:layout_constraintBottom_toBottomOf="@+id/guideline_two"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline_one">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/icon_cn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/card_icon_spacing"
+                android:layout_marginStart="@dimen/card_icon_spacing"
+                android:src="@drawable/ic_china_symbol" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/icon_cn"
+                android:layout_toRightOf="@+id/icon_cn"
+                android:gravity="center"
+                android:text="@string/chinese"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/language_title_size"
+                android:textStyle="bold" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="@dimen/progress_spacing"
+                android:layout_marginRight="@dimen/progress_spacing"
+                android:text="@string/init_progress"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/progress_label_size" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.66" />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/choice_it"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/card_spacing"
+        android:layout_marginLeft="@dimen/card_spacing"
+        android:layout_marginRight="@dimen/card_spacing"
+        android:layout_marginTop="@dimen/card_spacing"
+        app:cardBackgroundColor="@color/colorItaly"
+        app:cardCornerRadius="@dimen/card_radius"
+        app:layout_constraintBottom_toBottomOf="@+id/guideline_bottom"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline_two">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/icon_it"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/card_icon_spacing"
+                android:layout_marginStart="@dimen/card_icon_spacing"
+                android:src="@drawable/ic_italy_symbol" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/icon_it"
+                android:layout_toRightOf="@+id/icon_it"
+                android:gravity="center"
+                android:text="@string/italian"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/language_title_size"
+                android:textStyle="bold" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="@dimen/progress_spacing"
+                android:layout_marginRight="@dimen/progress_spacing"
+                android:text="@string/init_progress"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/progress_label_size" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.98" />
+
+</android.support.constraint.ConstraintLayout>

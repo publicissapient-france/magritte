@@ -33,14 +33,14 @@
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/result"
-            android:layout_width="240dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:background="@android:color/black"
             android:gravity="center"
-            android:padding="10dp"
+            android:paddingTop="15dp"
             android:textColor="@android:color/white"
-            android:textSize="12sp"
+            android:textSize="16sp"
             tools:text="Result: apple Confidence: 95%" />
 
         <android.support.constraint.ConstraintLayout

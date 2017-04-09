@@ -11,6 +11,8 @@ import butterknife.OnClick;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
+import static fr.xebia.magritte.LanguageActivity.LANGUAGE_CHOICE;
+
 @RuntimePermissions
 public class LevelActivity extends AppCompatActivity {
 
@@ -18,11 +20,17 @@ public class LevelActivity extends AppCompatActivity {
     public static final int MODEL_FRUIT = 0;
     public static final int MODEL_VEGETABLE = 1;
 
+    private int languageChoice;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_level);
         ButterKnife.bind(this);
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            languageChoice = bundle.getInt(LANGUAGE_CHOICE);
+        }
     }
 
     @OnClick(R.id.level_one)
@@ -32,7 +40,7 @@ public class LevelActivity extends AppCompatActivity {
 
     @OnClick(R.id.level_two)
     public void onLevelTwoClick() {
-        LevelActivityPermissionsDispatcher.startClassifierWithCheck(this, MODEL_VEGETABLE);
+        // TODO
     }
 
     @Override
@@ -45,6 +53,7 @@ public class LevelActivity extends AppCompatActivity {
     void startClassifier(int modelType) {
         Intent intent = new Intent(this, ClassifierActivity.class);
         intent.putExtra(MODEL_TYPE, modelType);
+        intent.putExtra(LANGUAGE_CHOICE, languageChoice);
         startActivity(intent);
     }
 }

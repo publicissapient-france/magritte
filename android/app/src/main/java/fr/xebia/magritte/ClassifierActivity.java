@@ -16,6 +16,7 @@
 
 package fr.xebia.magritte;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -31,13 +32,16 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.util.Size;
 import android.view.Display;
+import android.widget.Toast;
 
 import org.tensorflow.demo.env.ImageUtils;
 import org.tensorflow.demo.env.Logger;
 
 import java.util.List;
+import java.util.Locale;
 
 import fr.xebia.magritte.model.ClassifierContract;
+import fr.xebia.magritte.model.Fruit;
 
 public class ClassifierActivity extends CameraActivity implements OnImageAvailableListener,
         ClassifierContract.View {
@@ -57,6 +61,8 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     private static final boolean SAVE_PREVIEW_BITMAP = false;
     private static final boolean MAINTAIN_ASPECT = true;
 
+    private static final String TAG = ClassifierActivity.class.getSimpleName();
+
     private Integer sensorOrientation;
 
     private int previewWidth = 0;
@@ -74,6 +80,8 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     private ResultsView resultsView;
 
     private int currentMode;
+    private int languageChoice;
+
     private TextToSpeech tts;
 
     private ClassifierContract.Presenter presenter;
@@ -84,30 +92,34 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             currentMode = bundle.getInt(LevelActivity.MODEL_TYPE);
+            languageChoice = bundle.getInt(LanguageActivity.LANGUAGE_CHOICE);
         }
         String modelfileName = MODEL_FILE;
         String labelfileName;
         String outputName;
-        final int levelPhrase;
 
         if (currentMode == 0) {
             labelfileName = LABELS_FRUITS;
             outputName = OUTPUT_NAME_FRUITS;
-            levelPhrase = R.string.learn_fruit;
         } else {
+            // TODO
             labelfileName = LABELS_VEGETABLES;
             outputName = OUTPUT_NAME_VEGETABLES;
-            levelPhrase = R.string.learn_vegetable;
         }
 
+        final Locale desiredLocale = getDesiredLocale(languageChoice);
+
+        // TODO add tss language availability check
         tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 if (status == TextToSpeech.SUCCESS) {
-                    // TODO say hello in chosen language
-                    speak(getString(levelPhrase));
+                    // Note: language setting needs to be done in onInit
+                    speak("tts ok");
+                    tts.setLanguage(desiredLocale);
+                    Log.d(TAG, "Initialization succeeded! Speak" + desiredLocale.getLanguage());
                 } else {
-                    Log.e("TTS", "Initilization Failed!");
+                    Toast.makeText(ClassifierActivity.this, "Initilization Failed!", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -122,7 +134,21 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                 INPUT_NAME,
                 outputName);
 
-        presenter = new ClassifierPresenter(this, classifier);
+        presenter = new ClassifierPresenter(this, desiredLocale, classifier);
+    }
+
+    private Locale getDesiredLocale(int languageChoice) {
+        Locale desiredLocale;
+        if (languageChoice == LanguageActivity.LANG_FR) {
+            desiredLocale = Locale.FRENCH;
+        } else if (languageChoice == LanguageActivity.LANG_CN) {
+            desiredLocale = Locale.CHINESE;
+        } else if (languageChoice == LanguageActivity.LANG_IT) {
+            desiredLocale = Locale.ITALIAN;
+        } else {
+            desiredLocale = Locale.US;
+        }
+        return desiredLocale;
     }
 
     @Override
@@ -235,14 +261,19 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     }
 
     @Override
+    public Context getContext() {
+        return this;
+    }
+
+    @Override
     public void displayRecognitions(List<Classifier.Recognition> recognitionList) {
         resultsView.displayResults(recognitionList);
         computing = false;
     }
 
     @Override
-    public void displayTopMatch(Classifier.Recognition recognition) {
-        resultsView.displayTopMatch(recognition);
+    public void displayTopMatch(Fruit fruit) {
+        resultsView.displayTopMatch(fruit);
     }
 
     @Override

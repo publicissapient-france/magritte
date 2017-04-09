@@ -4,4 +4,10 @@
     <dimen name="level_icon_size">120dp</dimen>
     
     <dimen name="score_overlay_height">120dp</dimen>
+    <dimen name="card_spacing">15dp</dimen>
+    <dimen name="card_icon_spacing">20dp</dimen>
+    <dimen name="language_title_size">32sp</dimen>
+    <dimen name="progress_label_size">14sp</dimen>
+    <dimen name="progress_spacing">10dp</dimen>
+    <dimen name="card_radius">4dp</dimen>
 </resources>

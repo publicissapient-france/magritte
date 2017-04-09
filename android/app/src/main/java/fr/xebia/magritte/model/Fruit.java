@@ -4,18 +4,20 @@ import fr.xebia.magritte.R;
 
 public enum Fruit {
 
-    APPLE(R.drawable.ic_apple_outline, R.drawable.ic_apple_filled),
-    GRAPE(R.drawable.ic_grape_outline, R.drawable.ic_grape_filled),
-    KIWI(R.drawable.ic_kiwi_outline, R.drawable.ic_kiwi_filled),
-    BANANA(R.drawable.ic_banana_outline, R.drawable.ic_banana_filled),
-    STRAWBERRY(R.drawable.ic_strawberry_outline, R.drawable.ic_strawberry_filled);
+    APPLE(R.drawable.ic_apple_outline, R.drawable.ic_apple_filled, R.string.apple),
+    GRAPE(R.drawable.ic_grape_outline, R.drawable.ic_grape_filled, R.string.grape),
+    KIWI(R.drawable.ic_kiwi_outline, R.drawable.ic_kiwi_filled, R.string.kiwi),
+    BANANA(R.drawable.ic_banana_outline, R.drawable.ic_banana_filled, R.string.banana),
+    STRAWBERRY(R.drawable.ic_strawberry_outline, R.drawable.ic_strawberry_filled, R.string.strawberry);
 
     private int outlineRes;
     private int filledRes;
+    private int titleRes;
 
-    Fruit(int outlineRes, int filledRes) {
+    Fruit(int outlineRes, int filledRes, int titleRes) {
         this.outlineRes = outlineRes;
         this.filledRes = filledRes;
+        this.titleRes = titleRes;
     }
 
     public int getOutlineRes() {
@@ -24,5 +26,9 @@ public enum Fruit {
 
     public int getFilledRes() {
         return filledRes;
+    }
+
+    public int getTitleRes() {
+        return titleRes;
     }
 }

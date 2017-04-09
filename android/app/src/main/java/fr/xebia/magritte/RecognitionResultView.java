@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.RelativeLayout;
 
 import java.util.List;
@@ -14,10 +13,6 @@ import butterknife.ButterKnife;
 import fr.xebia.magritte.model.Fruit;
 
 public class RecognitionResultView extends RelativeLayout implements ResultsView {
-
-    private static final String TAG = RecognitionResultView.class.getSimpleName();
-
-    private Classifier.Recognition recognition;
 
     @BindView(R.id.result)
     AppCompatTextView resultTextView;
@@ -56,30 +51,26 @@ public class RecognitionResultView extends RelativeLayout implements ResultsView
     }
 
     @Override
-    public void displayTopMatch(Classifier.Recognition recognition) {
-        try {
-            Fruit fruit = Fruit.valueOf(recognition.getTitle().toUpperCase());
-            switch (fruit) {
-                case APPLE:
-                    apple.setImageResource(R.drawable.ic_apple_filled);
-                    break;
-                case STRAWBERRY:
-                    strawberry.setImageResource(R.drawable.ic_strawberry_filled);
-                    break;
-                case GRAPE:
-                    grape.setImageResource(R.drawable.ic_grape_filled);
-                    break;
-                case KIWI:
-                    kiwi.setImageResource(R.drawable.ic_kiwi_filled);
-                    break;
-                case BANANA:
-                    banana.setImageResource(R.drawable.ic_banana_filled);
-                    break;
-                default:
-                    break;
-            }
-        } catch (IllegalArgumentException e) {
-            Log.d(TAG, "No matching");
+    public void displayTopMatch(Fruit fruit) {
+        switch (fruit) {
+            case APPLE:
+                apple.setImageResource(fruit.getFilledRes());
+                break;
+            case STRAWBERRY:
+                strawberry.setImageResource(fruit.getFilledRes());
+                break;
+            case GRAPE:
+                grape.setImageResource(fruit.getFilledRes());
+                break;
+            case KIWI:
+                kiwi.setImageResource(fruit.getFilledRes());
+                break;
+            case BANANA:
+                banana.setImageResource(fruit.getFilledRes());
+                break;
+            default:
+                break;
         }
+
     }
 }

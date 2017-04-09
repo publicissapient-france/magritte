@@ -17,9 +17,11 @@ package fr.xebia.magritte;
 
 import java.util.List;
 
+import fr.xebia.magritte.model.Fruit;
+
 public interface ResultsView {
 
     void displayResults(List<Classifier.Recognition> recognitions);
 
-    void displayTopMatch(Classifier.Recognition recognition);
+    void displayTopMatch(Fruit fruit);
 }

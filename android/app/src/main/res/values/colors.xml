@@ -5,9 +5,13 @@
     <color name="colorAccent">#FFA726</color>
     <color name="home_bg">#FCFCFC</color>
     <color name="gray">#4A4A4A</color>
+    <color name="graySemiTransparent">#4D4A4A4A</color>
 
     <color name="levelOne">#ffdddd</color>
     <color name="levelTwo">#e2ffdd</color>
 
     <color name="scoreOverlay">#B3E34361</color>
+    <color name="colorFrance">#3CB3DC</color>
+    <color name="colorChina">#FFCC36</color>
+    <color name="colorItaly">#009246</color>
 </resources>

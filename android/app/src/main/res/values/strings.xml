@@ -23,6 +23,16 @@
 
     <string name="start">Let\'s Start</string>
     <string name="result">Result: %1$s Confidence: %2$f\n</string>
-    <string name="learn_fruit">Let\'s learn to say the name of some fruits!</string>
-    <string name="learn_vegetable">Let\'s learn to say the name of some vegetables!</string>
+
+    <string name="french">French</string>
+    <string name="init_progress">0 / 20</string>
+    <string name="chinese">Chinese</string>
+    <string name="italian">Italian</string>
+
+    <string name="apple">apple</string>
+    <string name="grape">grape</string>
+    <string name="kiwi">kiwi</string>
+    <string name="banana">banana</string>
+    <string name="strawberry">strawberry</string>
+    <string name="fruit">Fruit</string>
 </resources>
