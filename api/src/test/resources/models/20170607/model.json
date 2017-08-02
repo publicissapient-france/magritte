@@ -1,0 +1,31 @@
+{
+  "version": 20170607,
+  "created_at": "2017/02/20 15:47:10",
+  "categories": [
+    {
+      "name": "fruit",
+      "classes": [
+        {
+          "name": "apple",
+          "translations": [
+            { "lang": "fr", "value": "pomme" },
+            { "lang": "en", "value": "apple" }
+          ]
+        },
+        {
+          "name": "banana",
+          "translations": [
+            { "lang": "fr", "value": "banane" },
+            { "lang": "en", "value": "banana" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "vegetable",
+      "classes": [
+
+      ]
+    }
+  ]
+}
