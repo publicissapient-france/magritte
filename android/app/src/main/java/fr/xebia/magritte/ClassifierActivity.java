@@ -35,17 +35,16 @@ import android.view.Display;
 import android.widget.Toast;
 
 import org.tensorflow.demo.env.ImageUtils;
-import org.tensorflow.demo.env.Logger;
 
 import java.util.List;
 import java.util.Locale;
 
 import fr.xebia.magritte.model.ClassifierContract;
 import fr.xebia.magritte.model.Fruit;
+import timber.log.Timber;
 
 public class ClassifierActivity extends CameraActivity implements OnImageAvailableListener,
         ClassifierContract.View {
-    private static final Logger LOGGER = new Logger();
 
     private static final int INPUT_SIZE = 299;
     private static final int IMAGE_MEAN = 128;
@@ -62,8 +61,6 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     private static final boolean MAINTAIN_ASPECT = true;
 
     private static final String TAG = ClassifierActivity.class.getSimpleName();
-
-    private Integer sensorOrientation;
 
     private int previewWidth = 0;
     private int previewHeight = 0;
@@ -172,18 +169,18 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
 
     @Override
     public void onPreviewSizeChosen(final Size size, final int rotation) {
-        resultsView = (ResultsView) findViewById(R.id.results);
+        resultsView = findViewById(R.id.results);
         previewWidth = size.getWidth();
         previewHeight = size.getHeight();
 
         final Display display = getWindowManager().getDefaultDisplay();
         final int screenOrientation = display.getRotation();
 
-        LOGGER.i("Sensor orientation: %d, Screen orientation: %d", rotation, screenOrientation);
+        Timber.i("Sensor orientation: %d, Screen orientation: %d", rotation, screenOrientation);
 
-        sensorOrientation = rotation + screenOrientation;
+        Integer sensorOrientation = rotation + screenOrientation;
 
-        LOGGER.i("Initializing at size %dx%d", previewWidth, previewHeight);
+        Timber.i("Initializing at size %dx%d", previewWidth, previewHeight);
         rgbBytes = new int[previewWidth * previewHeight];
         rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
         croppedBitmap = Bitmap.createBitmap(INPUT_SIZE, INPUT_SIZE, Config.ARGB_8888);
@@ -192,7 +189,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                 ImageUtils.getTransformationMatrix(
                         previewWidth, previewHeight,
                         INPUT_SIZE, INPUT_SIZE,
-                        sensorOrientation, MAINTAIN_ASPECT);
+                    sensorOrientation, MAINTAIN_ASPECT);
 
         cropToFrameTransform = new Matrix();
         frameToCropTransform.invert(cropToFrameTransform);
@@ -241,7 +238,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
             if (image != null) {
                 image.close();
             }
-            LOGGER.e(e, "Exception!");
+            Timber.e(e, "Exception!");
             Trace.endSection();
             return;
         }

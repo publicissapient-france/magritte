@@ -21,25 +21,20 @@ import android.app.Fragment;
 import android.media.Image.Plane;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Size;
-import android.view.KeyEvent;
-import android.view.WindowManager;
-
-import org.tensorflow.demo.env.Logger;
 
 import java.nio.ByteBuffer;
 
-public abstract class CameraActivity extends Activity implements OnImageAvailableListener {
-    private static final Logger LOGGER = new Logger();
+import timber.log.Timber;
 
-    private Handler handler;
+public abstract class CameraActivity extends Activity implements OnImageAvailableListener {
+
     private HandlerThread handlerThread;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-        LOGGER.d("onCreate " + this);
+        Timber.d("onCreate " + this);
         super.onCreate(null);
 
         setContentView(R.layout.activity_camera);
@@ -48,26 +43,25 @@ public abstract class CameraActivity extends Activity implements OnImageAvailabl
 
     @Override
     public synchronized void onStart() {
-        LOGGER.d("onStart " + this);
+        Timber.d("onStart " + this);
         super.onStart();
     }
 
     @Override
     public synchronized void onResume() {
-        LOGGER.d("onResume " + this);
+        Timber.d("onResume " + this);
         super.onResume();
 
         handlerThread = new HandlerThread("inference");
         handlerThread.start();
-        handler = new Handler(handlerThread.getLooper());
     }
 
     @Override
     public synchronized void onPause() {
-        LOGGER.d("onPause " + this);
+        Timber.d("onPause " + this);
 
         if (!isFinishing()) {
-            LOGGER.d("Requesting finish");
+            Timber.d("Requesting finish");
             finish();
         }
 
@@ -75,9 +69,8 @@ public abstract class CameraActivity extends Activity implements OnImageAvailabl
         try {
             handlerThread.join();
             handlerThread = null;
-            handler = null;
         } catch (final InterruptedException e) {
-            LOGGER.e(e, "Exception!");
+            Timber.e(e, "Exception!");
         }
 
         super.onPause();
@@ -85,20 +78,14 @@ public abstract class CameraActivity extends Activity implements OnImageAvailabl
 
     @Override
     public synchronized void onStop() {
-        LOGGER.d("onStop " + this);
+        Timber.d("onStop " + this);
         super.onStop();
     }
 
     @Override
     public synchronized void onDestroy() {
-        LOGGER.d("onDestroy " + this);
+        Timber.d("onDestroy " + this);
         super.onDestroy();
-    }
-
-    protected synchronized void runInBackground(final Runnable r) {
-        if (handler != null) {
-            handler.post(r);
-        }
     }
 
     protected void setFragment() {
@@ -123,7 +110,7 @@ public abstract class CameraActivity extends Activity implements OnImageAvailabl
         for (int i = 0; i < planes.length; ++i) {
             final ByteBuffer buffer = planes[i].getBuffer();
             if (yuvBytes[i] == null) {
-                LOGGER.d("Initializing buffer %d at size %d", i, buffer.capacity());
+                Timber.d("Initializing buffer %d at size %d", i, buffer.capacity());
                 yuvBytes[i] = new byte[buffer.capacity()];
             }
             buffer.get(yuvBytes[i]);

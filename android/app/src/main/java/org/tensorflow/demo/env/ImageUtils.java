@@ -22,13 +22,12 @@ import android.os.Environment;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import timber.log.Timber;
+
 /**
  * Utility class for manipulating images.
  **/
 public class ImageUtils {
-    @SuppressWarnings("unused")
-    private static final Logger LOGGER = new Logger();
-
     /**
      * Saves a Bitmap object to disk for analysis.
      *
@@ -46,12 +45,12 @@ public class ImageUtils {
      */
     public static void saveBitmap(final Bitmap bitmap, final String filename) {
         final String root =
-                Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "tensorflow";
-        LOGGER.i("Saving %dx%d bitmap to %s.", bitmap.getWidth(), bitmap.getHeight(), root);
+            Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "tensorflow";
+        Timber.i("Saving %dx%d bitmap to %s.", bitmap.getWidth(), bitmap.getHeight(), root);
         final File myDir = new File(root);
 
         if (!myDir.mkdirs()) {
-            LOGGER.i("Make dir failed");
+            Timber.i("Make dir failed");
         }
 
         final String fname = filename;
@@ -65,7 +64,7 @@ public class ImageUtils {
             out.flush();
             out.close();
         } catch (final Exception e) {
-            LOGGER.e(e, "Exception!");
+            Timber.e(e, "Exception!");
         }
     }
 
@@ -84,12 +83,12 @@ public class ImageUtils {
      * @return The transformation fulfilling the desired requirements.
      */
     public static Matrix getTransformationMatrix(
-            final int srcWidth,
-            final int srcHeight,
-            final int dstWidth,
-            final int dstHeight,
-            final int applyRotation,
-            final boolean maintainAspectRatio) {
+        final int srcWidth,
+        final int srcHeight,
+        final int dstWidth,
+        final int dstHeight,
+        final int applyRotation,
+        final boolean maintainAspectRatio) {
         final Matrix matrix = new Matrix();
 
         if (applyRotation != 0) {
@@ -132,15 +131,15 @@ public class ImageUtils {
     }
 
     public static void convertYUV420ToARGB8888(
-            byte[] yData,
-            byte[] uData,
-            byte[] vData,
-            int width,
-            int height,
-            int yRowStride,
-            int uvRowStride,
-            int uvPixelStride,
-            int[] out) {
+        byte[] yData,
+        byte[] uData,
+        byte[] vData,
+        int width,
+        int height,
+        int yRowStride,
+        int uvRowStride,
+        int uvPixelStride,
+        int[] out) {
 
         int i = 0;
         for (int y = 0; y < height; y++) {
@@ -152,10 +151,10 @@ public class ImageUtils {
             for (int x = 0; x < width; x++) {
                 int uv_offset = pUV + (x >> 1) * uvPixelStride;
                 out[i++] =
-                        YUV2RGB(
-                                convertByteToInt(yData, pY + x),
-                                convertByteToInt(uData, uv_offset),
-                                convertByteToInt(vData, uv_offset));
+                    YUV2RGB(
+                        convertByteToInt(yData, pY + x),
+                        convertByteToInt(uData, uv_offset),
+                        convertByteToInt(vData, uv_offset));
             }
         }
     }
