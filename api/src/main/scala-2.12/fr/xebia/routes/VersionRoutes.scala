@@ -1,81 +1,95 @@
 package fr.xebia.routes
 
-import akka.event.slf4j.Logger
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.{ContentType, MediaType, StatusCodes}
 import akka.http.scaladsl.server.Directives.{complete, get, _}
-import akka.http.scaladsl.server.Route
-import fr.xebia.model.{Model, Models}
+import akka.http.scaladsl.server.PathMatchers.Segment
+import akka.http.scaladsl.server.{Route, StandardRoute}
+import akka.http.scaladsl.server.directives.Credentials
+import akka.http.scaladsl.settings.RoutingSettings
+import fr.xebia.model.{Category, Model, Models}
 import spray.json.DefaultJsonProtocol
 
-/**
-  *
-  * /versions                                 => list all versions's ID
-  * /versions/ID                              => json doc from model version
-  *
-  */
-class VersionRoutes(val modelsPath: String) extends SprayJsonSupport with DefaultJsonProtocol {
-
+class VersionRoutes(val modelsPath: String)(implicit routingSettings: RoutingSettings)
+  extends SprayJsonSupport with DefaultJsonProtocol {
   private val models = new Models(modelsPath)
 
+
+  val notFound: Route = complete(StatusCodes.NotFound)
+  val badRequest: Route = complete(StatusCodes.BadRequest)
+
+  def myUserPassAuthenticator(credentials: Credentials): Option[String] =
+    credentials match {
+      case p@Credentials.Provided(id) if p.verify("p4ssw0rd") => Some(id)
+      case _ => None
+    }
+
+  val securedRoute =
+    Route.seal {
+      authenticateBasic(realm = "secure site", myUserPassAuthenticator) { userName =>
+        baseRoute
+      }
+    }
+
   val baseRoute: Route =
-    pathPrefix("versions") {
-      pathEnd {
+    path("versions") {
+      get {
+        complete(models.listAll().map(_.version))
+      }
+    } ~
+      path("versions" / IntNumber / "data") { modelVersion =>
         get {
-          complete(models.listAll().map(_.version))
+          println(s"Find model $modelVersion")
+          findModel(modelVersion).map(model => {
+            complete(model)
+          }).getOrElse(notFound)
         }
       } ~
-        pathPrefix(IntNumber) { modelVersion =>
-          modelRoute(modelVersion)
-        } ~
-        complete(StatusCodes.BadRequest, s"Version should be a number")
-    }
-
-  def modelRoute(modelVersion: Int): Route = {
-    models.listAll().find(_.version == modelVersion) match {
-      case None =>
+      path("versions" / IntNumber / "categories") { modelVersion =>
         get {
-          complete(StatusCodes.NotFound)
+          findModel(modelVersion).map(model => {
+            complete(model.categories)
+          }).getOrElse(notFound)
         }
-      case Some(model) =>
-        (pathEnd & get) {
-          complete(model)
-        } ~
-          (path("model") & get) {
-            // FIXME add filename
-            getFromFile(
-              model.toFile,
-              ContentType(
-                MediaType.applicationBinary("octet-stream", MediaType.NotCompressible)
-              )
-            )
-          } ~
-          pathPrefix("categories") {
-            categoriesRoute(model)
+      } ~
+      path("versions" / IntNumber / "categories" / Segment) {
+        (modelVersion, categoryId) => {
+          get {
+            findModel(modelVersion)
+              .flatMap(model => {
+                findCategory(model, categoryId)
+              })
+              .map(category => {
+                complete(category)
+              })
+              .getOrElse(notFound)
           }
-    }
-  }
-
-  def categoriesRoute(model: Model): Route = {
-    (pathEnd & get) {
-      complete(model.categories)
-    } ~
-      pathPrefix(Segment) { categoryId =>
-        categoryRoute(model, categoryId)
-      }
-  }
-
-  def categoryRoute(model: Model, categoryId: String): Route = {
-    model.categories.find(_.name == categoryId) match {
-      case None =>
+        }
+      } ~
+      path("versions" / IntNumber / "model") { modelVersion =>
         get {
-          complete(StatusCodes.NotFound)
+          println(s"looking for $modelVersion")
+          findModel(modelVersion)
+            .map((model: Model) => {
+              getFromFile(
+                model.toFile,
+                ContentType(
+                  MediaType.applicationBinary("octet-stream", MediaType.NotCompressible)
+                )
+              )
+            }).getOrElse(notFound)
         }
-      case Some(category) =>
-        (pathEnd & get) {
-          complete(category)
-        }
-    }
+      } ~
+      get {
+        badRequest
+      }
+
+  def findModel(modelVersion: Int): Option[Model] = {
+    models.listAll().find(_.version == modelVersion)
+  }
+
+  def findCategory(model: Model, categoryId: String): Option[Category] = {
+    model.categories.find(_.name == categoryId)
   }
 
 }

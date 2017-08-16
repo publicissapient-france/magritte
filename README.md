@@ -8,3 +8,4 @@ Embed deep learning on your mobile device.
 
 * `python`: model training related script.
 * `android`: android app.
+* `api`: scala backend
