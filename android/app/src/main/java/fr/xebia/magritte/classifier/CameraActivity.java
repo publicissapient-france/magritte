@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package fr.xebia.magritte;
+package fr.xebia.magritte.classifier;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -26,6 +26,7 @@ import android.util.Size;
 
 import java.nio.ByteBuffer;
 
+import fr.xebia.magritte.R;
 import timber.log.Timber;
 
 public abstract class CameraActivity extends Activity implements OnImageAvailableListener {

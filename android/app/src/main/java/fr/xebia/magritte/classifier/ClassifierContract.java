@@ -1,4 +1,4 @@
-package fr.xebia.magritte.model;
+package fr.xebia.magritte.classifier;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import java.util.List;
 import java.util.Locale;
 
-import fr.xebia.magritte.Classifier;
+import fr.xebia.magritte.model.Fruit;
 
 public interface ClassifierContract {
 

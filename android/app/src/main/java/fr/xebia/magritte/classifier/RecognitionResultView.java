@@ -1,4 +1,4 @@
-package fr.xebia.magritte;
+package fr.xebia.magritte.classifier;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatImageView;
@@ -10,6 +10,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import fr.xebia.magritte.R;
 import fr.xebia.magritte.model.Fruit;
 
 public class RecognitionResultView extends RelativeLayout implements ResultsView {
@@ -71,6 +72,5 @@ public class RecognitionResultView extends RelativeLayout implements ResultsView
             default:
                 break;
         }
-
     }
 }

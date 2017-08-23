@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-package fr.xebia.magritte;
+package fr.xebia.magritte.classifier;
 
 import android.graphics.Bitmap;
 import android.graphics.RectF;

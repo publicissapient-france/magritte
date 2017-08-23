@@ -13,10 +13,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-package fr.xebia.magritte;
+package fr.xebia.magritte.classifier;
 
 import java.util.List;
 
+import fr.xebia.magritte.classifier.Classifier;
 import fr.xebia.magritte.model.Fruit;
 
 public interface ResultsView {

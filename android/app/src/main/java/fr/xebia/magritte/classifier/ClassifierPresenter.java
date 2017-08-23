@@ -1,4 +1,4 @@
-package fr.xebia.magritte;
+package fr.xebia.magritte.classifier;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 
-import fr.xebia.magritte.model.ClassifierContract;
 import fr.xebia.magritte.model.Fruit;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;

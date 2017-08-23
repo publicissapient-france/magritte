@@ -8,8 +8,18 @@ import android.support.v7.app.AppCompatActivity;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import fr.xebia.magritte.classifier.ClassifierActivity;
+import fr.xebia.magritte.model.Data;
+import fr.xebia.magritte.service.MagritteService;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.moshi.MoshiConverterFactory;
 
 import static fr.xebia.magritte.LanguageActivity.LANGUAGE_CHOICE;
 
@@ -21,6 +31,7 @@ public class LevelActivity extends AppCompatActivity {
     public static final int MODEL_VEGETABLE = 1;
 
     private int languageChoice;
+    private CompositeDisposable compositeDisposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +42,40 @@ public class LevelActivity extends AppCompatActivity {
         if (bundle != null) {
             languageChoice = bundle.getInt(LANGUAGE_CHOICE);
         }
+
+        compositeDisposable = new CompositeDisposable();
+        loadData();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.clear();
+    }
+
+    private void loadData() {
+        MagritteService service = new Retrofit.Builder()
+            .baseUrl(BuildConfig.API_ENDPOINT)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create())
+            .build().create(MagritteService.class);
+
+        // get payload
+        compositeDisposable.add(service.getData()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe(this::handleResponse, this::handleError)
+        );
+
+        // TODO download model file
+    }
+
+    private void handleError(Throwable throwable) {
+
+    }
+
+    private void handleResponse(Data data) {
+        // TODO store payload
     }
 
     @OnClick(R.id.level_one)

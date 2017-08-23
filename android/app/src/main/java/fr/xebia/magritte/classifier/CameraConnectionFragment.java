@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package fr.xebia.magritte;
+package fr.xebia.magritte.classifier;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -59,6 +59,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import fr.xebia.magritte.R;
 import timber.log.Timber;
 
 public class CameraConnectionFragment extends Fragment {

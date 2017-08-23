@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package fr.xebia.magritte;
+package fr.xebia.magritte.classifier;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -39,7 +39,9 @@ import org.tensorflow.demo.env.ImageUtils;
 import java.util.List;
 import java.util.Locale;
 
-import fr.xebia.magritte.model.ClassifierContract;
+import fr.xebia.magritte.LanguageActivity;
+import fr.xebia.magritte.LevelActivity;
+import fr.xebia.magritte.R;
 import fr.xebia.magritte.model.Fruit;
 import timber.log.Timber;
 
