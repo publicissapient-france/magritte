@@ -4,15 +4,15 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.{ContentType, MediaType, StatusCodes}
 import akka.http.scaladsl.server.Directives.{complete, get, _}
 import akka.http.scaladsl.server.PathMatchers.Segment
-import akka.http.scaladsl.server.{Route, StandardRoute}
+import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.Credentials
 import akka.http.scaladsl.settings.RoutingSettings
-import fr.xebia.model.{Category, Model, Models}
+import fr.xebia.model.{Category, Model, Models, S3Model}
 import spray.json.DefaultJsonProtocol
 
-class VersionRoutes(val modelsPath: String)(implicit routingSettings: RoutingSettings)
+class VersionRoutes(implicit val s3Client: S3Model, val routingSettings: RoutingSettings)
   extends SprayJsonSupport with DefaultJsonProtocol {
-  private val models = new Models(modelsPath)
+  private val models = new Models()
 
 
   val notFound: Route = complete(StatusCodes.NotFound)
@@ -68,11 +68,10 @@ class VersionRoutes(val modelsPath: String)(implicit routingSettings: RoutingSet
       } ~
       path("versions" / IntNumber / "model") { modelVersion =>
         get {
-          println(s"looking for $modelVersion")
           findModel(modelVersion)
             .map((model: Model) => {
               getFromFile(
-                model.toFile,
+                Model.toFile(model),
                 ContentType(
                   MediaType.applicationBinary("octet-stream", MediaType.NotCompressible)
                 )

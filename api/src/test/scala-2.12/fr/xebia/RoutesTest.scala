@@ -4,10 +4,14 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.headers.BasicHttpCredentials
 import akka.http.scaladsl.testkit.ScalatestRouteTest
+import com.amazonaws.auth.{AWSStaticCredentialsProvider, AnonymousAWSCredentials}
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration
+import com.amazonaws.services.s3.{AmazonS3, AmazonS3ClientBuilder}
 import fr.xebia.data.Placeholders
-import fr.xebia.model.{Category, Model, ModelClass, Translation}
+import fr.xebia.model._
 import fr.xebia.routes.VersionRoutes
-import org.scalatest.{FunSpec, Matchers}
+import io.findify.s3mock.S3Mock
+import org.scalatest.{BeforeAndAfterAll, FunSpec, Matchers}
 import spray.json.DefaultJsonProtocol
 
 class RoutesTest extends FunSpec
@@ -15,10 +19,31 @@ class RoutesTest extends FunSpec
   with ScalatestRouteTest
   with SprayJsonSupport
   with DefaultJsonProtocol
+  with BeforeAndAfterAll
   with Placeholders {
 
+  val api = S3Mock(port = 8001, dir = "src/test/")
+  api.start
+  val endpoint = new EndpointConfiguration("http://localhost:8001", "us-west-2")
+  val s3Client: AmazonS3 = AmazonS3ClientBuilder
+    .standard
+    .withPathStyleAccessEnabled(true)
+    .withEndpointConfiguration(endpoint)
+    .withCredentials(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()))
+    .build
+  implicit val bucketName = "resources"
+  implicit val s3Model = new S3Model(s3Client)
+
+  import scala.collection.JavaConverters._
+
+  println("=" * 20)
+  println("List Buckets")
+  println(s3Client.listBuckets().asScala.map(_.getName).mkString(","))
+  println("=" * 20)
+
+
   describe("Routes") {
-    val routes = new VersionRoutes("src/test/resources/models").securedRoute
+    val routes = new VersionRoutes().securedRoute
 
     describe("On any path") {
       describe("With no credentials") {
@@ -70,8 +95,7 @@ class RoutesTest extends FunSpec
             }
             it("should return a specific version") {
               Get(s"/versions/$version/data") ~> addCredentials(validCredentials) ~> routes ~> check {
-                responseAs[Model] shouldBe Model(
-                  "",
+                responseAs[Model] shouldBe new Model(
                   version,
                   "2017/02/20 15:47:10",
                   List(

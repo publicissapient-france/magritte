@@ -3,7 +3,7 @@ package fr.xebia.model
 import spray.json.DefaultJsonProtocol
 
 case class ModelClass(label: String,
-                      imageUrl: String,
+                      thumbnailurl: String,
                       translations: List[Translation])
 
 case class Translation(lang: String, value: String)

@@ -4,16 +4,19 @@
   "categories": [
     {
       "name": "fruit",
+      "thumbnailurl": "http://placeholder.xebia.fr",
       "classes": [
         {
-          "name": "apple",
+          "label": "apple",
+          "thumbnailurl": "http://placeholder.xebia.fr",
           "translations": [
             { "lang": "fr", "value": "pomme" },
             { "lang": "en", "value": "apple" }
           ]
         },
         {
-          "name": "banana",
+          "label": "banana",
+          "thumbnailurl": "http://placeholder.xebia.fr",
           "translations": [
             { "lang": "fr", "value": "banane" },
             { "lang": "en", "value": "banana" }
@@ -23,6 +26,7 @@
     },
     {
       "name": "vegetable",
+      "thumbnailurl": "http://placeholder.xebia.fr",
       "classes": [
 
       ]
