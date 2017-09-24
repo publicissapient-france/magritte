@@ -1,6 +1,6 @@
 package fr.xebia.model
 
-import spray.json.DefaultJsonProtocol
+import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 
 case class ModelClass(label: String,
                       thumbnailurl: String,
@@ -9,6 +9,6 @@ case class ModelClass(label: String,
 case class Translation(lang: String, value: String)
 
 object ModelClass extends DefaultJsonProtocol {
-  implicit val translationFormat = jsonFormat2(Translation.apply)
-  implicit val modelClassFormat = jsonFormat3(ModelClass.apply)
+  implicit val translationFormat: RootJsonFormat[Translation] = jsonFormat2(Translation.apply)
+  implicit val modelClassFormat: RootJsonFormat[ModelClass] = jsonFormat3(ModelClass.apply)
 }

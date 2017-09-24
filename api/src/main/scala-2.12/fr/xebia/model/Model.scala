@@ -7,8 +7,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary
 import fr.xebia.config.ModelJsonFormats
 import spray.json.{DefaultJsonProtocol, RootJsonFormat, _}
 
-case class Model(version: Int, createdAt: String, categories: List[Category]) {
-}
+case class Model(version: Int, createdAt: String, categories: List[Category])
 
 object Model extends DefaultJsonProtocol with ModelJsonFormats {
 
@@ -28,7 +27,10 @@ object Model extends DefaultJsonProtocol with ModelJsonFormats {
     }
   }
 
-  def apply(version: String, modelFiles: List[S3ObjectSummary])(implicit s3Client: S3Model): Option[Model] = {
+  def apply(version: String)(implicit s3client: S3Model): Option[Model] =
+    apply(s3client.listObjectForModel(version))
+
+  def apply(modelFiles: List[S3ObjectSummary])(implicit s3Client: S3Model): Option[Model] = {
     modelFiles
       .find(_.getKey.contains("model.json"))
       .map(modelDescriptorS3ObjectSummary => {
@@ -44,5 +46,9 @@ object Model extends DefaultJsonProtocol with ModelJsonFormats {
     os.write(s3client.getS3ObjectContent(descriptor))
     os.close()
     file
+  }
+
+  def listVersions()(implicit s3client: S3Model): List[String] = {
+    s3client.listModelVersion()
   }
 }

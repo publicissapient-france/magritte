@@ -7,13 +7,11 @@ import akka.http.scaladsl.server.PathMatchers.Segment
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.Credentials
 import akka.http.scaladsl.settings.RoutingSettings
-import fr.xebia.model.{Category, Model, Models, S3Model}
+import fr.xebia.model.{Category, Model, S3Model}
 import spray.json.DefaultJsonProtocol
 
 class VersionRoutes(implicit val s3Client: S3Model, val routingSettings: RoutingSettings)
   extends SprayJsonSupport with DefaultJsonProtocol {
-  private val models = new Models()
-
 
   val notFound: Route = complete(StatusCodes.NotFound)
   val badRequest: Route = complete(StatusCodes.BadRequest)
@@ -34,7 +32,7 @@ class VersionRoutes(implicit val s3Client: S3Model, val routingSettings: Routing
   val baseRoute: Route =
     path("versions") {
       get {
-        complete(models.listAll().map(_.version))
+        complete(Model.listVersions())
       }
     } ~
       path("versions" / IntNumber / "data") { modelVersion =>
@@ -84,7 +82,7 @@ class VersionRoutes(implicit val s3Client: S3Model, val routingSettings: Routing
       }
 
   def findModel(modelVersion: Int): Option[Model] = {
-    models.listAll().find(_.version == modelVersion)
+    Model(modelVersion.toString)
   }
 
   def findCategory(model: Model, categoryId: String): Option[Category] = {

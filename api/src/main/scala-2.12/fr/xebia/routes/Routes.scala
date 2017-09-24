@@ -4,7 +4,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.{HttpEntity, HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import fr.xebia.model.{Models, _}
+import fr.xebia.model.{_}
 import spray.json.DefaultJsonProtocol
 
 /**
