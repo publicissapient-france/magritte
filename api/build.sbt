@@ -1,5 +1,6 @@
 
 name := "magritte-api"
+description := "Ceci n'est pas un pom(.xml)"
 
 version := "1.1"
 
