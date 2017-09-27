@@ -76,10 +76,10 @@ class RoutesTest extends FunSpec
 
         describe("GET on /versions") {
           it("should return list of models") {
-            val version = 20170607
+            val version = "20170607"
             Get("/versions") ~> addCredentials(validCredentials) ~> routes ~> check {
               status should be(StatusCodes.OK)
-              responseAs[List[Int]] shouldBe List(version)
+              responseAs[List[String]] shouldBe List(version)
             }
           }
         }
