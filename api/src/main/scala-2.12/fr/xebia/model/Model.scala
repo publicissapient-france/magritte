@@ -22,7 +22,7 @@ object Model extends DefaultJsonProtocol with ModelJsonFormats {
       json.asJsObject.getFields("version", "created_at", "categories") match {
         case Seq(version, createdAt, categories) =>
           Model(version.convertTo[Int], createdAt.convertTo[String], categories.convertTo[List[Category]])
-        case other ⇒ deserializationError("Cannot deserialize ProductItem: invalid input. Raw input: " + other)
+        case other => deserializationError("Cannot deserialize ProductItem: invalid input. Raw input: " + other)
       }
     }
   }
