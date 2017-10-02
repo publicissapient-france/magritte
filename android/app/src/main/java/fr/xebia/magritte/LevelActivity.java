@@ -80,7 +80,7 @@ public class LevelActivity extends AppCompatActivity {
 
     @OnClick(R.id.level_one)
     public void onLevelOneClick() {
-        LevelActivityPermissionsDispatcher.startClassifierWithCheck(this, MODEL_FRUIT);
+        LevelActivityPermissionsDispatcher.startClassifierWithPermissionCheck(this, MODEL_FRUIT);
     }
 
     @OnClick(R.id.level_two)
