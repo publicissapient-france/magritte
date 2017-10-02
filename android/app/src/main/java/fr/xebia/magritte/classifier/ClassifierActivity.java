@@ -39,14 +39,13 @@ import org.tensorflow.demo.env.ImageUtils;
 import java.util.List;
 import java.util.Locale;
 
-import fr.xebia.magritte.LanguageActivity;
-import fr.xebia.magritte.LevelActivity;
+import fr.xebia.magritte.ConstantKt;
 import fr.xebia.magritte.R;
 import fr.xebia.magritte.model.Fruit;
 import timber.log.Timber;
 
 public class ClassifierActivity extends CameraActivity implements OnImageAvailableListener,
-        ClassifierContract.View {
+    ClassifierContract.View {
 
     private static final int INPUT_SIZE = 299;
     private static final int IMAGE_MEAN = 128;
@@ -90,8 +89,8 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         super.onCreate(savedInstanceState);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            currentMode = bundle.getInt(LevelActivity.MODEL_TYPE);
-            languageChoice = bundle.getInt(LanguageActivity.LANGUAGE_CHOICE);
+            currentMode = bundle.getInt(ConstantKt.MODEL_TYPE);
+            languageChoice = bundle.getInt(ConstantKt.LANGUAGE_CHOICE);
         }
         String modelfileName = MODEL_FILE;
         String labelfileName;
@@ -124,25 +123,25 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         });
 
         Classifier classifier = TensorFlowImageClassifier.create(
-                getAssets(),
-                modelfileName,
-                labelfileName,
-                INPUT_SIZE,
-                IMAGE_MEAN,
-                IMAGE_STD,
-                INPUT_NAME,
-                outputName);
+            getAssets(),
+            modelfileName,
+            labelfileName,
+            INPUT_SIZE,
+            IMAGE_MEAN,
+            IMAGE_STD,
+            INPUT_NAME,
+            outputName);
 
         presenter = new ClassifierPresenter(this, desiredLocale, classifier);
     }
 
     private Locale getDesiredLocale(int languageChoice) {
         Locale desiredLocale;
-        if (languageChoice == LanguageActivity.LANG_FR) {
+        if (languageChoice == ConstantKt.LANG_FR) {
             desiredLocale = Locale.FRENCH;
-        } else if (languageChoice == LanguageActivity.LANG_CN) {
+        } else if (languageChoice == ConstantKt.LANG_CN) {
             desiredLocale = Locale.CHINESE;
-        } else if (languageChoice == LanguageActivity.LANG_IT) {
+        } else if (languageChoice == ConstantKt.LANG_IT) {
             desiredLocale = Locale.ITALIAN;
         } else {
             desiredLocale = Locale.US;
@@ -188,10 +187,10 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         croppedBitmap = Bitmap.createBitmap(INPUT_SIZE, INPUT_SIZE, Config.ARGB_8888);
 
         frameToCropTransform =
-                ImageUtils.getTransformationMatrix(
-                        previewWidth, previewHeight,
-                        INPUT_SIZE, INPUT_SIZE,
-                    sensorOrientation, MAINTAIN_ASPECT);
+            ImageUtils.getTransformationMatrix(
+                previewWidth, previewHeight,
+                INPUT_SIZE, INPUT_SIZE,
+                sensorOrientation, MAINTAIN_ASPECT);
 
         cropToFrameTransform = new Matrix();
         frameToCropTransform.invert(cropToFrameTransform);
@@ -225,15 +224,15 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
             final int uvRowStride = planes[1].getRowStride();
             final int uvPixelStride = planes[1].getPixelStride();
             ImageUtils.convertYUV420ToARGB8888(
-                    yuvBytes[0],
-                    yuvBytes[1],
-                    yuvBytes[2],
-                    previewWidth,
-                    previewHeight,
-                    yRowStride,
-                    uvRowStride,
-                    uvPixelStride,
-                    rgbBytes);
+                yuvBytes[0],
+                yuvBytes[1],
+                yuvBytes[2],
+                previewWidth,
+                previewHeight,
+                yRowStride,
+                uvRowStride,
+                uvPixelStride,
+                rgbBytes);
 
             image.close();
         } catch (final Exception e) {

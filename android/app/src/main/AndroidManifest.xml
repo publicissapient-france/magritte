@@ -29,9 +29,9 @@
             android:name=".classifier.ClassifierActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".LevelActivity"
+            android:name=".level.LevelActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".LanguageActivity" />
+        <activity android:name=".language.LanguageActivity" />
     </application>
 
 </manifest>

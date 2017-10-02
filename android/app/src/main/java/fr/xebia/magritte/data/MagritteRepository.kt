@@ -1,15 +1,12 @@
-package fr.xebia.magritte.service
+package fr.xebia.magritte.data
 
 import fr.xebia.magritte.model.MagritteData
 import io.reactivex.Observable
 import okhttp3.ResponseBody
-import retrofit2.http.GET
 
-interface MagritteService {
+interface MagritteRepository {
 
-    @GET("data")
     fun getData(): Observable<MagritteData>
 
-    @GET("model")
     fun getModelFile(): Observable<ResponseBody>
 }

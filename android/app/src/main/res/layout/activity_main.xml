@@ -44,9 +44,9 @@
         app:layout_constraintVertical_bias="0.64" />
 
     <android.support.v7.widget.AppCompatButton
+        android:id="@+id/start_app"
         android:layout_width="160dp"
         android:layout_height="50dp"
-        android:onClick="onStartApp"
         android:text="@string/start"
         android:theme="@style/PrimaryButton"
         app:layout_constraintBottom_toBottomOf="parent"

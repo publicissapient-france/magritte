@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fr.xebia.magritte.LevelActivity">
+    tools:context="fr.xebia.magritte.level.LevelActivity">
 
     <FrameLayout
         android:id="@+id/level_one"
