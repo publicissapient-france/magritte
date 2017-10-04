@@ -37,8 +37,8 @@ class VersionRoutes(implicit val s3Client: S3Model, val routingSettings: Routing
     } ~
       path("versions" / IntNumber / "data") { modelVersion =>
         get {
-          println(s"Find model $modelVersion")
           findModel(modelVersion).map(model => {
+            println(model)
             complete(model)
           }).getOrElse(notFound)
         }

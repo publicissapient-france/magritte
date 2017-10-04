@@ -5,31 +5,39 @@
     {
       "name": "fruit",
       "thumbnailurl": "http://placeholder.xebia.fr",
-      "classes": [
-        {
-          "label": "apple",
+      "classes": {
+        "apple": {
           "thumbnailurl": "http://placeholder.xebia.fr",
           "translations": [
-            { "lang": "fr", "value": "pomme" },
-            { "lang": "en", "value": "apple" }
+            {
+              "lang": "fr",
+              "value": "pomme"
+            },
+            {
+              "lang": "en",
+              "value": "apple"
+            }
           ]
         },
-        {
-          "label": "banana",
+        "banana": {
           "thumbnailurl": "http://placeholder.xebia.fr",
           "translations": [
-            { "lang": "fr", "value": "banane" },
-            { "lang": "en", "value": "banana" }
+            {
+              "lang": "fr",
+              "value": "banane"
+            },
+            {
+              "lang": "en",
+              "value": "banana"
+            }
           ]
         }
-      ]
+      }
     },
     {
       "name": "vegetable",
       "thumbnailurl": "http://placeholder.xebia.fr",
-      "classes": [
-
-      ]
+      "classes": {}
     }
   ]
 }
