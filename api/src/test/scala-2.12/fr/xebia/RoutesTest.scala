@@ -34,14 +34,6 @@ class RoutesTest extends FunSpec
   implicit val bucketName = "resources"
   implicit val s3Model = new S3Model(s3Client)
 
-  import scala.collection.JavaConverters._
-
-  println("=" * 20)
-  println("List Buckets")
-  println(s3Client.listBuckets().asScala.map(_.getName).mkString(","))
-  println("=" * 20)
-
-
   describe("Routes") {
     val routes = new VersionRoutes().securedRoute
 
@@ -67,7 +59,7 @@ class RoutesTest extends FunSpec
         val validCredentials = BasicHttpCredentials("toto", "p4ssw0rd")
 
         describe("Any request") {
-          it("should return a 'Unauthorized' response") {
+          it("should return a 'OK' response") {
             Get("/versions") ~> addCredentials(validCredentials) ~> routes ~> check {
               status should be(StatusCodes.OK)
             }
@@ -84,7 +76,7 @@ class RoutesTest extends FunSpec
           }
         }
 
-        describe("GET on /version/ID") {
+        describe("GET on /version/ID/data") {
           describe("With a valid model ID") {
             val version = 20170607
 
@@ -101,19 +93,23 @@ class RoutesTest extends FunSpec
                   List(
                     Category(
                       "fruit",
-                      urlPlaceholder,
-                      List(
-                        ModelClass("apple", urlPlaceholder, List(
-                          Translation("fr", "pomme"),
-                          Translation("en", "apple")
-                        )),
-                        ModelClass("banana", urlPlaceholder, List(
-                          Translation("fr", "banane"),
-                          Translation("en", "banana")
-                        ))
+                      "http://placeholder.xebia.fr",
+                      Map(
+                        "apple" -> ModelClass(
+                          "http://placeholder.xebia.fr",
+                          List(
+                            Translation("fr", "pomme"),
+                            Translation("en", "apple")
+                          )),
+                        "banana" -> ModelClass(
+                          "http://placeholder.xebia.fr",
+                          List(
+                            Translation("fr", "banane"),
+                            Translation("en", "banana")
+                          ))
                       )
                     ),
-                    Category("vegetable", urlPlaceholder, List())
+                    Category("vegetable", "http://placeholder.xebia.fr", Map())
                   )
                 )
               }
@@ -178,19 +174,23 @@ class RoutesTest extends FunSpec
                 responseAs[List[Category]] should contain theSameElementsAs List(
                   Category(
                     "fruit",
-                    urlPlaceholder,
-                    List(
-                      ModelClass("apple", urlPlaceholder, List(
-                        Translation("fr", "pomme"),
-                        Translation("en", "apple")
-                      )),
-                      ModelClass("banana", urlPlaceholder, List(
-                        Translation("fr", "banane"),
-                        Translation("en", "banana")
-                      ))
+                    "http://placeholder.xebia.fr",
+                    Map(
+                      "apple" -> ModelClass(
+                        "http://placeholder.xebia.fr",
+                        List(
+                          Translation("fr", "pomme"),
+                          Translation("en", "apple")
+                        )),
+                      "banana" -> ModelClass(
+                        "http://placeholder.xebia.fr",
+                        List(
+                          Translation("fr", "banane"),
+                          Translation("en", "banana")
+                        ))
                     )
                   ),
-                  Category("vegetable", urlPlaceholder, List())
+                  Category("vegetable", "http://placeholder.xebia.fr", Map())
                 )
               }
             }
@@ -223,16 +223,20 @@ class RoutesTest extends FunSpec
                   status should be(StatusCodes.OK)
                   responseAs[Category] shouldBe Category(
                     "fruit",
-                    urlPlaceholder,
-                    List(
-                      ModelClass("apple", urlPlaceholder, List(
-                        Translation("fr", "pomme"),
-                        Translation("en", "apple")
-                      )),
-                      ModelClass("banana", urlPlaceholder, List(
-                        Translation("fr", "banane"),
-                        Translation("en", "banana")
-                      ))
+                    "http://placeholder.xebia.fr",
+                    Map(
+                      "apple" -> ModelClass(
+                        "http://placeholder.xebia.fr",
+                        List(
+                          Translation("fr", "pomme"),
+                          Translation("en", "apple")
+                        )),
+                      "banana" -> ModelClass(
+                        "http://placeholder.xebia.fr",
+                        List(
+                          Translation("fr", "banane"),
+                          Translation("en", "banana")
+                        ))
                     )
                   )
                 }
