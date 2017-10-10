@@ -18,7 +18,7 @@ class LanguageActivity : AppCompatActivity(), LanguageContract.View {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_language)
 
-        presenter = LanguagePresenter(this, Injection.provideRepository())
+        presenter = LanguagePresenter(this, Injection.provideRepository(applicationContext))
         presenter.getData()
 
         choice_fr.setOnClickListener { onLanguageClicked(LANG_FR) }

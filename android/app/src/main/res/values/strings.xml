@@ -35,4 +35,6 @@
     <string name="banana">banana</string>
     <string name="strawberry">strawberry</string>
     <string name="fruit">Fruit</string>
+
+    <string name="loading">Downloading initial data…</string>
 </resources>

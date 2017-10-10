@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/home_bg"
-    tools:context="fr.xebia.magritte.MainActivity">
+    tools:context="fr.xebia.magritte.home.MainActivity">
 
     <android.support.v7.widget.AppCompatImageView
         android:layout_width="100dp"
@@ -43,17 +43,50 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.64" />
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/start_app"
-        android:layout_width="160dp"
-        android:layout_height="50dp"
-        android:text="@string/start"
-        android:theme="@style/PrimaryButton"
+    <ViewFlipper
+        android:id="@+id/mainViewFlipper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.88" />
+        app:layout_constraintVertical_bias="0.88">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/loadingLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/loading"
+                android:textStyle="bold" />
+
+            <ProgressBar
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_below="@+id/loadingLabel"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp" />
+
+        </RelativeLayout>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/startButton"
+            android:layout_width="160dp"
+            android:layout_height="50dp"
+            android:text="@string/start"
+            android:theme="@style/PrimaryButton" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/retryButton"
+            android:layout_width="160dp"
+            android:layout_height="50dp"
+            android:text="@string/start"
+            android:theme="@style/PrimaryButton" />
+    </ViewFlipper>
 
 </android.support.constraint.ConstraintLayout>

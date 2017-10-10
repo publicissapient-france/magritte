@@ -5,11 +5,9 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import fr.xebia.magritte.LANGUAGE_CHOICE
-import fr.xebia.magritte.MODEL_FRUIT
-import fr.xebia.magritte.MODEL_TYPE
-import fr.xebia.magritte.R
+import fr.xebia.magritte.*
 import fr.xebia.magritte.classifier.ClassifierActivity
+import fr.xebia.magritte.data.SharedPreferenceHelper
 import kotlinx.android.synthetic.main.activity_level.*
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
@@ -18,6 +16,7 @@ import permissions.dispatcher.RuntimePermissions
 class LevelActivity : AppCompatActivity() {
 
     private var languageChoice: Int = 0
+    private lateinit var spHelper: SharedPreferenceHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +28,7 @@ class LevelActivity : AppCompatActivity() {
         level_one.setOnClickListener {
             startClassifierWithPermissionCheck(MODEL_FRUIT)
         }
+        spHelper = SharedPreferenceHelper(applicationContext)
     }
 
     @SuppressLint("NeedOnRequestPermissionsResult")
@@ -42,6 +42,7 @@ class LevelActivity : AppCompatActivity() {
         val intent = Intent(this, ClassifierActivity::class.java)
         intent.putExtra(MODEL_TYPE, modelType)
         intent.putExtra(LANGUAGE_CHOICE, languageChoice)
+        intent.putExtra(MODEL_FILE, spHelper.getModelFilePath())
         startActivity(intent)
     }
 }

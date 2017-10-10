@@ -54,7 +54,6 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     private static final String OUTPUT_NAME_FRUITS = "final_result_fruits";
     private static final String OUTPUT_NAME_VEGETABLES = "final_result_vegetables";
 
-    private static final String MODEL_FILE = "file:///android_asset/magritte_model.pb";
     private static final String LABELS_FRUITS = "file:///android_asset/magritte_labels_fruits.txt";
     private static final String LABELS_VEGETABLES = "file:///android_asset/magritte_labels_vegetables.txt";
 
@@ -76,10 +75,6 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     private Matrix cropToFrameTransform;
 
     private ResultsView resultsView;
-
-    private int currentMode;
-    private int languageChoice;
-
     private TextToSpeech tts;
 
     private ClassifierContract.Presenter presenter;
@@ -89,28 +84,18 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         super.onCreate(savedInstanceState);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            currentMode = bundle.getInt(ConstantKt.MODEL_TYPE);
-            languageChoice = bundle.getInt(ConstantKt.LANGUAGE_CHOICE);
-        }
-        String modelfileName = MODEL_FILE;
-        String labelfileName;
-        String outputName;
+            int currentMode = bundle.getInt(ConstantKt.MODEL_TYPE);
+            int languageChoice = bundle.getInt(ConstantKt.LANGUAGE_CHOICE);
+            String modelFile = bundle.getString(ConstantKt.MODEL_FILE);
 
-        if (currentMode == 0) {
-            labelfileName = LABELS_FRUITS;
-            outputName = OUTPUT_NAME_FRUITS;
-        } else {
-            // TODO
-            labelfileName = LABELS_VEGETABLES;
-            outputName = OUTPUT_NAME_VEGETABLES;
-        }
+            // TODO fetch label file from disk
+            String labelfileName = currentMode == 0 ? LABELS_FRUITS : LABELS_VEGETABLES;
+            String outputName = currentMode == 0 ? OUTPUT_NAME_FRUITS : OUTPUT_NAME_VEGETABLES;
 
-        final Locale desiredLocale = getDesiredLocale(languageChoice);
+            final Locale desiredLocale = getDesiredLocale(languageChoice);
 
-        // TODO add tss language availability check
-        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
+            // TODO add tss language availability check
+            tts = new TextToSpeech(this, status -> {
                 if (status == TextToSpeech.SUCCESS) {
                     // Note: language setting needs to be done in onInit
                     speak("tts ok");
@@ -119,20 +104,20 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                 } else {
                     Toast.makeText(ClassifierActivity.this, "Initilization Failed!", Toast.LENGTH_LONG).show();
                 }
-            }
-        });
+            });
 
-        Classifier classifier = TensorFlowImageClassifier.create(
-            getAssets(),
-            modelfileName,
-            labelfileName,
-            INPUT_SIZE,
-            IMAGE_MEAN,
-            IMAGE_STD,
-            INPUT_NAME,
-            outputName);
+            Classifier classifier = TensorFlowImageClassifier.create(
+                getAssets(),
+                modelFile,
+                labelfileName,
+                INPUT_SIZE,
+                IMAGE_MEAN,
+                IMAGE_STD,
+                INPUT_NAME,
+                outputName);
 
-        presenter = new ClassifierPresenter(this, desiredLocale, classifier);
+            presenter = new ClassifierPresenter(this, desiredLocale, classifier);
+        }
     }
 
     private Locale getDesiredLocale(int languageChoice) {
