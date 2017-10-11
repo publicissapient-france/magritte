@@ -133,6 +133,59 @@ class RoutesTest extends FunSpec
           }
         }
 
+        describe("GET on /version/ID/labels?category=fruit") {
+          describe("With a valid model id") {
+            val version = 20170607
+
+            describe("With a known category") {
+              it("should retun category details") {
+                val category = "fruit"
+                Get(s"/versions/$version/labels?category=$category") ~> addCredentials(validCredentials) ~> routes ~> check {
+                  responseAs[List[Label]] shouldBe List(
+                    Label(0, "kiwi"),
+                    Label(1, "grape"),
+                    Label(2, "apple"),
+                    Label(3, "plum"),
+                    Label(4, "strawberry"),
+                    Label(5, "mango"),
+                    Label(6, "pineapple"),
+                    Label(7, "orange"),
+                    Label(8, "raspberry"),
+                    Label(9, "banana")
+                  )
+                }
+              }
+            }
+
+            describe("With an unknown category") {
+              val category = "something"
+              it("should return HTTP 404") {
+                Get(s"/versions/$version/labels?category=$category") ~> addCredentials(validCredentials) ~> routes ~> check {
+                  status should be(StatusCodes.NotFound)
+                }
+              }
+            }
+          }
+
+          describe("With a model ID that does not correspond to any existing model") {
+            val category = "fruit"
+            it("should return 404") {
+              Get(s"/versions/123456789/labels?category=$category") ~> addCredentials(validCredentials) ~> routes ~> check {
+                status should be(StatusCodes.NotFound)
+              }
+            }
+          }
+
+          describe("With a model ID that is not a number") {
+            val category = "fruit"
+            it("should return 400 BadRequest") {
+              Get(s"/versions/invalid/labels?category=$category") ~> addCredentials(validCredentials) ~> routes ~> check {
+                status should be(StatusCodes.BadRequest)
+              }
+            }
+          }
+        }
+
         describe("GET on /version/ID/model") {
           describe("With a valid model ID") {
             it("should download the model file") {

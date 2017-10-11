@@ -26,6 +26,14 @@ class S3Model(s3client: AmazonS3)(implicit bucketName: String) {
       .toList
   }
 
+  def listLabels(modelVerison: String, categoryName: String): Option[List[String]] = {
+    listObjectForModel(modelVerison)
+      .find(_.getKey.endsWith(s"labels_$categoryName.txt"))
+      .map(getS3ObjectContentAsString)
+      .map(_.split("\n"))
+      .map(_.toList)
+  }
+
   def listObjectForModel(modelVerison: String): List[S3ObjectSummary] = {
     val list: ObjectListing = s3client.listObjects(bucketName, s"models/$modelVerison")
     list.getObjectSummaries

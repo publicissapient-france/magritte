@@ -43,6 +43,16 @@ class VersionRoutes(implicit val s3Client: S3Model, val routingSettings: Routing
           }).getOrElse(notFound)
         }
       } ~
+      path("versions" / IntNumber / "labels") { modelVersion =>
+        parameters("category") { category =>
+          get {
+            findModel(modelVersion)
+              .flatMap(Model.listLabels(_, category))
+              .map(complete(_))
+              .getOrElse(notFound)
+          }
+        }
+      } ~
       path("versions" / IntNumber / "categories") { modelVersion =>
         get {
           findModel(modelVersion).map(model => {

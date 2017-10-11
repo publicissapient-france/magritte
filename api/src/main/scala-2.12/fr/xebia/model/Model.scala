@@ -51,4 +51,12 @@ object Model extends DefaultJsonProtocol with ModelJsonFormats {
   def listVersions()(implicit s3client: S3Model): List[String] = {
     s3client.listModelVersion()
   }
+
+  def listLabels(model: Model, category: String)(implicit s3client: S3Model): Option[List[Label]] = {
+    s3client
+      .listLabels(model.version.toString, category)
+      .map(list => {
+        list.zipWithIndex.map((tuple: (String, Int)) => Label(tuple._2, tuple._1))
+      })
+  }
 }
