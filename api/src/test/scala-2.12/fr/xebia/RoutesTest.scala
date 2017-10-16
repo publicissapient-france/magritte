@@ -140,7 +140,8 @@ class RoutesTest extends FunSpec
             describe("With a known category") {
               it("should retun category details") {
                 val category = "fruit"
-                Get(s"/versions/$version/labels?category=$category") ~> addCredentials(validCredentials) ~> routes ~> check {
+                Get(s"/versions/$version/labels/json?category=$category") ~> addCredentials(validCredentials) ~> routes ~> check {
+                  status should be(StatusCodes.OK)
                   responseAs[List[Label]] shouldBe List(
                     Label(0, "kiwi"),
                     Label(1, "grape"),
@@ -153,6 +154,16 @@ class RoutesTest extends FunSpec
                     Label(8, "raspberry"),
                     Label(9, "banana")
                   )
+                }
+                Get(s"/versions/$version/labels/file?category=$category") ~> addCredentials(validCredentials) ~> routes ~> check {
+                  status should be(StatusCodes.OK)
+                  responseEntity.contentType.mediaType.mainType shouldBe "application"
+                  responseEntity.contentType.mediaType.subType shouldBe "octet-stream"
+                  responseEntity.contentLengthOption shouldBe defined
+                  responseEntity.contentLengthOption.get shouldBe 73
+                  // header("Content-Disposition") shouldBe defined
+                  // header("Content-Disposition").get shouldBe "attachment; filename=\"labels_fruit.txt\""
+                  // failTest("File name not tested")
                 }
               }
             }

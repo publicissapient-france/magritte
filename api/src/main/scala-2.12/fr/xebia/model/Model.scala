@@ -59,4 +59,17 @@ object Model extends DefaultJsonProtocol with ModelJsonFormats {
         list.zipWithIndex.map((tuple: (String, Int)) => Label(tuple._2, tuple._1))
       })
   }
+
+  def labelFile(model: Model, category: String)(implicit s3client: S3Model): Option[File] = {
+    val file = Files.createTempFile(s"labels_$category", "txt").toFile
+    val os = new FileOutputStream(file)
+    s3client
+      .listObjectForModel(model.version.toString)
+      .find(_.getKey.endsWith(s"labels_$category.txt"))
+      .map(objectSummary => {
+        os.write(s3client.getS3ObjectContent(objectSummary))
+        os.close()
+        file
+      })
+  }
 }

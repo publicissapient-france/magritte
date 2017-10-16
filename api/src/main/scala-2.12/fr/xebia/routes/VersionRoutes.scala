@@ -38,18 +38,29 @@ class VersionRoutes(implicit val s3Client: S3Model, val routingSettings: Routing
       path("versions" / IntNumber / "data") { modelVersion =>
         get {
           findModel(modelVersion).map(model => {
-            println(model)
             complete(model)
           }).getOrElse(notFound)
         }
       } ~
       path("versions" / IntNumber / "labels") { modelVersion =>
+        jsonCategory(modelVersion)
+      } ~
+      path("versions" / IntNumber / "labels" / "json") { modelVersion =>
+        jsonCategory(modelVersion)
+      } ~
+      path("versions" / IntNumber / "labels" / "file") { modelVersion =>
         parameters("category") { category =>
           get {
             findModel(modelVersion)
-              .flatMap(Model.listLabels(_, category))
-              .map(complete(_))
-              .getOrElse(notFound)
+              .flatMap((model: Model) => Model.labelFile(model, category))
+              .map(file => {
+                getFromFile(
+                  file,
+                  ContentType(
+                    MediaType.applicationBinary("octet-stream", MediaType.NotCompressible)
+                  )
+                )
+              }).getOrElse(notFound)
           }
         }
       } ~
@@ -90,6 +101,17 @@ class VersionRoutes(implicit val s3Client: S3Model, val routingSettings: Routing
       get {
         badRequest
       }
+
+  private def jsonCategory(modelVersion: Int) = {
+    parameters("category") { category =>
+      get {
+        findModel(modelVersion)
+          .flatMap(Model.listLabels(_, category))
+          .map(complete(_))
+          .getOrElse(notFound)
+      }
+    }
+  }
 
   def findModel(modelVersion: Int): Option[Model] = {
     Model(modelVersion.toString)
