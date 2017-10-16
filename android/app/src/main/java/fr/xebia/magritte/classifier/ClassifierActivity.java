@@ -54,7 +54,6 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     private static final String OUTPUT_NAME_FRUITS = "final_result_fruits";
     private static final String OUTPUT_NAME_VEGETABLES = "final_result_vegetables";
 
-
     private static final boolean SAVE_PREVIEW_BITMAP = false;
     private static final boolean MAINTAIN_ASPECT = true;
 
@@ -87,9 +86,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
             List<String> labels = bundle.getStringArrayList(ConstantKt.MODEL_LABELS);
             String modelFile = bundle.getString(ConstantKt.MODEL_FILE);
 
-            // TODO fetch label file from disk
             String outputName = currentMode == 0 ? OUTPUT_NAME_FRUITS : OUTPUT_NAME_VEGETABLES;
-
             final Locale desiredLocale = getDesiredLocale(languageChoice);
 
             // TODO add tss language availability check
