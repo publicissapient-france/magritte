@@ -2,7 +2,7 @@ package fr.xebia.magritte.model;
 
 import fr.xebia.magritte.R;
 
-public enum Fruit {
+public enum FruitResource {
 
     APPLE(R.drawable.ic_apple_outline, R.drawable.ic_apple_filled, R.string.apple),
     GRAPE(R.drawable.ic_grape_outline, R.drawable.ic_grape_filled, R.string.grape),
@@ -14,7 +14,7 @@ public enum Fruit {
     private int filledRes;
     private int titleRes;
 
-    Fruit(int outlineRes, int filledRes, int titleRes) {
+    FruitResource(int outlineRes, int filledRes, int titleRes) {
         this.outlineRes = outlineRes;
         this.filledRes = filledRes;
         this.titleRes = titleRes;

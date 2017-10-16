@@ -39,9 +39,11 @@ ext {
     supportLibVersion = "26.1.0"
     retrofitVersion = "2.3.0"
     permissionsdispatcherVersion = "3.0.1"
+    okhttpVersion = "3.9.0"
 }
 
 dependencies {
+    debugImplementation 'com.facebook.stetho:stetho:1.5.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
     implementation "com.android.support:support-v4:$supportLibVersion"
@@ -57,14 +59,21 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
+    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
     implementation 'com.squareup.moshi:moshi-kotlin:1.5.0'
     implementation 'com.jakewharton.timber:timber:4.5.1'
 
     implementation 'org.tensorflow:tensorflow-android:1.3.0'
 
+    // Room
+    implementation 'android.arch.persistence.room:runtime:1.0.0-alpha9-1'
+    implementation 'android.arch.persistence.room:rxjava2:1.0.0-alpha9-1'
+    kapt "android.arch.persistence.room:compiler:1.0.0-alpha9-1"
+
     testImplementation 'junit:junit:4.12'
 
-    implementation ("com.github.hotchemi:permissionsdispatcher:${permissionsdispatcherVersion}") {
+    implementation("com.github.hotchemi:permissionsdispatcher:${permissionsdispatcherVersion}") {
         exclude module: "support-v13"
     }
     kapt "com.github.hotchemi:permissionsdispatcher-processor:${permissionsdispatcherVersion}"

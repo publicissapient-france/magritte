@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import java.util.List;
 import java.util.Locale;
 
-import fr.xebia.magritte.model.Fruit;
+import fr.xebia.magritte.model.FruitResource;
 
 public interface ClassifierContract {
 
@@ -16,7 +16,7 @@ public interface ClassifierContract {
 
         void displayRecognitions(List<Classifier.Recognition> recognitionList);
 
-        void displayTopMatch(Fruit fruit);
+        void displayTopMatch(FruitResource fruit);
 
         void speakResult(String title);
     }

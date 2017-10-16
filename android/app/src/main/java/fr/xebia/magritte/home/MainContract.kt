@@ -9,7 +9,7 @@ interface MainContract {
 
         fun displayLoading()
 
-        fun displayLoadedWithSuccess(filePath: String?)
+        fun displayLoadedWithSuccess()
 
         fun displayLoadingError()
     }

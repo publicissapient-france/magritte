@@ -1,6 +1,6 @@
 package fr.xebia.magritte.home
 
-import android.content.Context
+import fr.xebia.magritte.CATEGORY_FRUIT
 import fr.xebia.magritte.data.MagritteRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -25,19 +25,28 @@ class MainPresenter(val view: MainContract.View,
     }
 
     override fun loadInitData() {
-        if (repository.getModelFilePath() == null) {
+        if (!repository.getInitDataLoadingStatus()) {
             view.displayLoading()
             compositeDisposable.add(
                     repository.getModelFile()
+                            .flatMap { repository.saveModelFileToDisk(it) }
+                            .flatMap { repository.getModelLabel(CATEGORY_FRUIT) }
+                            .flatMap { repository.insertLabels(CATEGORY_FRUIT, it) }
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
-                                    { view.displayLoadedWithSuccess(it.absolutePath) },
-                                    { view.displayLoadingError() }
+                                    {
+                                        repository.setInitDataLoadingStatus(true)
+                                        view.displayLoadedWithSuccess()
+                                    },
+                                    {
+                                        repository.setInitDataLoadingStatus(false)
+                                        view.displayLoadingError()
+                                    }
                             )
             )
         } else {
-            view.displayLoadedWithSuccess(repository.getModelFilePath())
+            view.displayLoadedWithSuccess()
         }
     }
 }

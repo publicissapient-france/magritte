@@ -17,12 +17,11 @@ package fr.xebia.magritte.classifier;
 
 import java.util.List;
 
-import fr.xebia.magritte.classifier.Classifier;
-import fr.xebia.magritte.model.Fruit;
+import fr.xebia.magritte.model.FruitResource;
 
 public interface ResultsView {
 
     void displayResults(List<Classifier.Recognition> recognitions);
 
-    void displayTopMatch(Fruit fruit);
+    void displayTopMatch(FruitResource fruit);
 }

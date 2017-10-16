@@ -85,7 +85,7 @@
             android:id="@+id/retryButton"
             android:layout_width="160dp"
             android:layout_height="50dp"
-            android:text="@string/start"
+            android:text="@string/retry"
             android:theme="@style/PrimaryButton" />
     </ViewFlipper>
 

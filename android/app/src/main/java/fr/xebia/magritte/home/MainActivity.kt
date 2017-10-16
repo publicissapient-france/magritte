@@ -38,14 +38,14 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         mainViewFlipper.displayedChild = VIEW_LOADING_CHILD
     }
 
-    override fun displayLoadedWithSuccess(filePath: String?) {
+    override fun displayLoadedWithSuccess() {
         mainViewFlipper.displayedChild = VIEW_SUCCESS_CHILD
-        Toast.makeText(this, "File stored: " + filePath, Toast.LENGTH_LONG).show()
+        Toast.makeText(this, R.string.data_init_success, Toast.LENGTH_LONG).show()
     }
 
     override fun displayLoadingError() {
         mainViewFlipper.displayedChild = VIEW_ERROR_CHILD
-        Toast.makeText(this, "File download error", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, R.string.data_init_error, Toast.LENGTH_LONG).show()
     }
 
     companion object {

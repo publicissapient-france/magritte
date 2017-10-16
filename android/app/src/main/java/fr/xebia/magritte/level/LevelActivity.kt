@@ -11,22 +11,27 @@ import fr.xebia.magritte.data.SharedPreferenceHelper
 import kotlinx.android.synthetic.main.activity_level.*
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
+import java.util.*
 
 @RuntimePermissions
-class LevelActivity : AppCompatActivity() {
+class LevelActivity : AppCompatActivity(), LevelContract.View {
 
     private var languageChoice: Int = 0
     private lateinit var spHelper: SharedPreferenceHelper
+    private lateinit var presenter: LevelContract.Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_level)
+
+        presenter = LevelPresenter(this, Injection.provideRepository(applicationContext))
+
         val bundle = intent.extras
         if (bundle != null) {
             languageChoice = bundle.getInt(LANGUAGE_CHOICE)
         }
         level_one.setOnClickListener {
-            startClassifierWithPermissionCheck(MODEL_FRUIT)
+            startClassifierWithPermissionCheck(CATEGORY_FRUIT)
         }
         spHelper = SharedPreferenceHelper(applicationContext)
     }
@@ -38,11 +43,20 @@ class LevelActivity : AppCompatActivity() {
     }
 
     @NeedsPermission(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    internal fun startClassifier(modelType: Int) {
+    internal fun startClassifier(category: String) {
+        presenter.loadData(category)
+    }
+
+    override fun displayClassifier(filePath: String?, labels: List<String>) {
         val intent = Intent(this, ClassifierActivity::class.java)
-        intent.putExtra(MODEL_TYPE, modelType)
         intent.putExtra(LANGUAGE_CHOICE, languageChoice)
-        intent.putExtra(MODEL_FILE, spHelper.getModelFilePath())
+        intent.putExtra(MODEL_FILE, filePath)
+        intent.putStringArrayListExtra(MODEL_LABELS, labels as ArrayList<String>)
         startActivity(intent)
     }
+
+    override fun displayError() {
+        // TODO
+    }
+
 }

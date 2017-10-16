@@ -23,9 +23,7 @@ import android.util.Log;
 import org.tensorflow.Operation;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -36,7 +34,7 @@ import java.util.Vector;
  * A classifier specialized to label images using TensorFlow.
  */
 public class TensorFlowImageClassifier implements Classifier {
-    private static final String TAG = "TensorFlowImageClassifier";
+    private static final String TAG = TensorFlowImageClassifier.class.getSimpleName();
 
     // Only return this many results with at least this confidence.
     private static final int MAX_RESULTS = 3;
@@ -68,7 +66,7 @@ public class TensorFlowImageClassifier implements Classifier {
      *
      * @param assetManager  The asset manager to be used to load assets.
      * @param modelFilename The filepath of the model GraphDef protocol buffer.
-     * @param labelFilename The filepath of label file for classes.
+     * @param labels        The list of labels
      * @param inputSize     The input size. A square image of inputSize x inputSize is assumed.
      * @param imageMean     The assumed mean of the image values.
      * @param imageStd      The assumed std of the image values.
@@ -77,33 +75,19 @@ public class TensorFlowImageClassifier implements Classifier {
      * @throws IOException
      */
     public static Classifier create(
-            AssetManager assetManager,
-            String modelFilename,
-            String labelFilename,
-            int inputSize,
-            int imageMean,
-            float imageStd,
-            String inputName,
-            String outputName) {
+        AssetManager assetManager,
+        String modelFilename,
+        List<String> labels,
+        int inputSize,
+        int imageMean,
+        float imageStd,
+        String inputName,
+        String outputName) {
         TensorFlowImageClassifier c = new TensorFlowImageClassifier();
         c.inputName = inputName;
         c.outputName = outputName;
 
-        // Read the label names into memory.
-        // TODO(andrewharp): make this handle non-assets.
-        String actualFilename = labelFilename.split("file:///android_asset/")[1];
-        Log.i(TAG, "Reading labels from: " + actualFilename);
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(assetManager.open(actualFilename)));
-            String line;
-            while ((line = br.readLine()) != null) {
-                c.labels.add(line);
-            }
-            br.close();
-        } catch (IOException e) {
-            throw new RuntimeException("Problem reading label file!", e);
-        }
+        c.labels.addAll(labels);
 
         c.inferenceInterface = new TensorFlowInferenceInterface(assetManager, modelFilename);
 
@@ -162,20 +146,20 @@ public class TensorFlowImageClassifier implements Classifier {
 
         // Find the best classifications.
         PriorityQueue<Recognition> pq =
-                new PriorityQueue<>(
-                        3,
-                        new Comparator<Recognition>() {
-                            @Override
-                            public int compare(Recognition lhs, Recognition rhs) {
-                                // Intentionally reversed to put high confidence at the head of the queue.
-                                return Float.compare(rhs.getConfidence(), lhs.getConfidence());
-                            }
-                        });
+            new PriorityQueue<>(
+                3,
+                new Comparator<Recognition>() {
+                    @Override
+                    public int compare(Recognition lhs, Recognition rhs) {
+                        // Intentionally reversed to put high confidence at the head of the queue.
+                        return Float.compare(rhs.getConfidence(), lhs.getConfidence());
+                    }
+                });
         for (int i = 0; i < outputs.length; ++i) {
             if (outputs[i] > THRESHOLD) {
                 pq.add(
-                        new Recognition(
-                                "" + i, labels.size() > i ? labels.get(i) : "unknown", outputs[i], null));
+                    new Recognition(
+                        "" + i, labels.size() > i ? labels.get(i) : "unknown", outputs[i], null));
             }
         }
         final ArrayList<Recognition> recognitions = new ArrayList<>();

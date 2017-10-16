@@ -41,7 +41,7 @@ import java.util.Locale;
 
 import fr.xebia.magritte.ConstantKt;
 import fr.xebia.magritte.R;
-import fr.xebia.magritte.model.Fruit;
+import fr.xebia.magritte.model.FruitResource;
 import timber.log.Timber;
 
 public class ClassifierActivity extends CameraActivity implements OnImageAvailableListener,
@@ -54,8 +54,6 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     private static final String OUTPUT_NAME_FRUITS = "final_result_fruits";
     private static final String OUTPUT_NAME_VEGETABLES = "final_result_vegetables";
 
-    private static final String LABELS_FRUITS = "file:///android_asset/magritte_labels_fruits.txt";
-    private static final String LABELS_VEGETABLES = "file:///android_asset/magritte_labels_vegetables.txt";
 
     private static final boolean SAVE_PREVIEW_BITMAP = false;
     private static final boolean MAINTAIN_ASPECT = true;
@@ -86,10 +84,10 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         if (bundle != null) {
             int currentMode = bundle.getInt(ConstantKt.MODEL_TYPE);
             int languageChoice = bundle.getInt(ConstantKt.LANGUAGE_CHOICE);
+            List<String> labels = bundle.getStringArrayList(ConstantKt.MODEL_LABELS);
             String modelFile = bundle.getString(ConstantKt.MODEL_FILE);
 
             // TODO fetch label file from disk
-            String labelfileName = currentMode == 0 ? LABELS_FRUITS : LABELS_VEGETABLES;
             String outputName = currentMode == 0 ? OUTPUT_NAME_FRUITS : OUTPUT_NAME_VEGETABLES;
 
             final Locale desiredLocale = getDesiredLocale(languageChoice);
@@ -106,10 +104,11 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                 }
             });
 
+
             Classifier classifier = TensorFlowImageClassifier.create(
                 getAssets(),
                 modelFile,
-                labelfileName,
+                labels,
                 INPUT_SIZE,
                 IMAGE_MEAN,
                 IMAGE_STD,
@@ -254,7 +253,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     }
 
     @Override
-    public void displayTopMatch(Fruit fruit) {
+    public void displayTopMatch(FruitResource fruit) {
         resultsView.displayTopMatch(fruit);
     }
 

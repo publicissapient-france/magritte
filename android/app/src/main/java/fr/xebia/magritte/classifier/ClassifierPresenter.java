@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 
-import fr.xebia.magritte.model.Fruit;
+import fr.xebia.magritte.model.FruitResource;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -70,9 +70,9 @@ public class ClassifierPresenter implements ClassifierContract.Presenter {
                 });
     }
 
-    private Fruit getFruitResult(Classifier.Recognition recognition) {
+    private FruitResource getFruitResult(Classifier.Recognition recognition) {
         try {
-            return Fruit.valueOf(recognition.getTitle().toUpperCase());
+            return FruitResource.valueOf(recognition.getTitle().toUpperCase());
         } catch (IllegalArgumentException e) {
             Log.d(TAG, "No matching");
             return null;
@@ -81,7 +81,7 @@ public class ClassifierPresenter implements ClassifierContract.Presenter {
 
     private void proceedTopMatch(Classifier.Recognition topMatch) {
         if (this.topMatch == null || !this.topMatch.getTitle().equals(topMatch.getTitle())) {
-            Fruit fruit = getFruitResult(topMatch);
+            FruitResource fruit = getFruitResult(topMatch);
             if (fruit != null) {
                 view.displayTopMatch(fruit);
                 view.speakResult(getLocalizedString(desiredLocale, fruit.getTitleRes()));
@@ -100,9 +100,9 @@ public class ClassifierPresenter implements ClassifierContract.Presenter {
     }
 
     private Classifier.Recognition getTopMatch(List<Classifier.Recognition> recognitions) {
-        for (Classifier.Recognition recog : recognitions) {
-            if (recog.getConfidence() > MATCH_THRESHOLD) {
-                return recog;
+        for (Classifier.Recognition recognition : recognitions) {
+            if (recognition.getConfidence() > MATCH_THRESHOLD) {
+                return recognition;
             }
         }
         return null;

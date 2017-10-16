@@ -11,7 +11,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fr.xebia.magritte.R;
-import fr.xebia.magritte.model.Fruit;
+import fr.xebia.magritte.model.FruitResource;
 
 public class RecognitionResultView extends RelativeLayout implements ResultsView {
 
@@ -52,7 +52,7 @@ public class RecognitionResultView extends RelativeLayout implements ResultsView
     }
 
     @Override
-    public void displayTopMatch(Fruit fruit) {
+    public void displayTopMatch(FruitResource fruit) {
         switch (fruit) {
             case APPLE:
                 apple.setImageResource(fruit.getFilledRes());

@@ -37,4 +37,7 @@
     <string name="fruit">Fruit</string>
 
     <string name="loading">Downloading initial data…</string>
+    <string name="data_init_success">Data initialized with success.</string>
+    <string name="data_init_error">Data initialization failed.</string>
+    <string name="retry">Retry</string>
 </resources>
