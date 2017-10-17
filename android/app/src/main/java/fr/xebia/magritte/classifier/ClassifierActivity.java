@@ -47,10 +47,10 @@ import timber.log.Timber;
 public class ClassifierActivity extends CameraActivity implements OnImageAvailableListener,
     ClassifierContract.View {
 
-    private static final int INPUT_SIZE = 299;
-    private static final int IMAGE_MEAN = 128;
-    private static final float IMAGE_STD = 128;
-    private static final String INPUT_NAME = "Mul";
+    private static final int INPUT_SIZE = 224;
+    private static final int IMAGE_MEAN = 224;
+    private static final float IMAGE_STD = 224;
+    private static final String INPUT_NAME = "input";
     private static final String OUTPUT_NAME_FRUITS = "final_result_fruits";
     private static final String OUTPUT_NAME_VEGETABLES = "final_result_vegetables";
 
