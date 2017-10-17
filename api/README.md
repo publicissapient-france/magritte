@@ -15,6 +15,14 @@ Or :
 * `export MODELS_PATH=???`
 * `sbt run`
 
-## RAF
+## TODO
 
-- inclure une basic auth
+- include basic authentification
+
+## Manual deploy on S3
+
+Create a folder with your version and add following files:
+
+- `model.pb`: set `Content-Type` as `application/octet-stream`
+- `model.json`: check current exiting versions for example, define your categories inside it
+- `labels_${category_name}.txt`: label file for your category
