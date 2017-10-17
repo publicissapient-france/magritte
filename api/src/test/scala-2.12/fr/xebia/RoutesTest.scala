@@ -161,9 +161,8 @@ class RoutesTest extends FunSpec
                   responseEntity.contentType.mediaType.subType shouldBe "octet-stream"
                   responseEntity.contentLengthOption shouldBe defined
                   responseEntity.contentLengthOption.get shouldBe 73
-                  // header("Content-Disposition") shouldBe defined
-                  // header("Content-Disposition").get shouldBe "attachment; filename=\"labels_fruit.txt\""
-                  // failTest("File name not tested")
+                  header("Content-Disposition") shouldBe defined
+                  header("Content-Disposition").get.value() shouldBe "attachment; filename=\"labels_fruit.txt\""
                 }
               }
             }
@@ -206,9 +205,8 @@ class RoutesTest extends FunSpec
                 responseEntity.contentType.mediaType.subType shouldBe "octet-stream"
                 responseEntity.contentLengthOption shouldBe defined
                 responseEntity.contentLengthOption.get shouldBe 21939501
-                // header("Content-Disposition") shouldBe defined
-                // header("Content-Disposition").get shouldBe "attachment; filename=\"model.pb\""
-                // failTest("File name not tested")
+                header("Content-Disposition") shouldBe defined
+                header("Content-Disposition").get.value() shouldBe "attachment; filename=\"model.pb\""
               }
             }
           }

@@ -1,7 +1,10 @@
 package fr.xebia.routes
 
+import akka.http.javadsl.model.headers.ContentDisposition
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import akka.http.scaladsl.model.{ContentType, MediaType, StatusCodes}
+import akka.http.scaladsl.model.headers.ContentDispositionTypes.attachment
+import akka.http.scaladsl.model.headers.`Content-Disposition`
+import akka.http.scaladsl.model.{ContentType, HttpHeader, MediaType, StatusCodes}
 import akka.http.scaladsl.server.Directives.{complete, get, _}
 import akka.http.scaladsl.server.PathMatchers.Segment
 import akka.http.scaladsl.server.Route
@@ -54,12 +57,14 @@ class VersionRoutes(implicit val s3Client: S3Model, val routingSettings: Routing
             findModel(modelVersion)
               .flatMap((model: Model) => Model.labelFile(model, category))
               .map(file => {
-                getFromFile(
-                  file,
-                  ContentType(
-                    MediaType.applicationBinary("octet-stream", MediaType.NotCompressible)
+                respondWithHeader(`Content-Disposition`(attachment, Map("filename" -> s"labels_$category.txt"))) {
+                  getFromFile(
+                    file,
+                    ContentType(
+                      MediaType.applicationBinary("octet-stream", MediaType.NotCompressible)
+                    )
                   )
-                )
+                }
               }).getOrElse(notFound)
           }
         }
@@ -89,12 +94,15 @@ class VersionRoutes(implicit val s3Client: S3Model, val routingSettings: Routing
         get {
           findModel(modelVersion)
             .map((model: Model) => {
-              getFromFile(
-                Model.toFile(model),
-                ContentType(
-                  MediaType.applicationBinary("octet-stream", MediaType.NotCompressible)
+              val modelFile = Model.toFile(model)
+              respondWithHeader(`Content-Disposition`(attachment, Map("filename" -> "model.pb"))) {
+                getFromFile(
+                  modelFile,
+                  ContentType(
+                    MediaType.applicationBinary("octet-stream", MediaType.NotCompressible)
+                  )
                 )
-              )
+              }
             }).getOrElse(notFound)
         }
       } ~
