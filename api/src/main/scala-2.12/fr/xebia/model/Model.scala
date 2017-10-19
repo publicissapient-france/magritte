@@ -4,26 +4,31 @@ import java.io.{File, FileOutputStream}
 import java.nio.file.Files
 
 import com.amazonaws.services.s3.model.S3ObjectSummary
-import fr.xebia.config.ModelJsonFormats
 import spray.json.{DefaultJsonProtocol, RootJsonFormat, _}
 
-case class Model(version: Int, createdAt: String, categories: List[Category])
+case class Model(version: Int, createdAt: String, categories: List[Category], params: Map[String, Any] = Map())
 
-object Model extends DefaultJsonProtocol with ModelJsonFormats {
+object Model extends DefaultJsonProtocol with CustomJsonFormats {
 
   implicit object ModelFormat extends RootJsonFormat[Model] {
     override def write(model: Model): JsValue = JsObject(Map(
       "version" -> model.version.toJson,
+      "params" -> model.params.toJson,
       "created_at" -> model.createdAt.toJson,
       "categories" -> model.categories.toJson
     ))
 
     override def read(json: JsValue): Model = {
-      json.asJsObject.getFields("version", "created_at", "categories") match {
+      val result = json.asJsObject.getFields("version", "created_at", "categories") match {
         case Seq(version, createdAt, categories) =>
           Model(version.convertTo[Int], createdAt.convertTo[String], categories.convertTo[List[Category]])
         case other => deserializationError("Cannot deserialize ProductItem: invalid input. Raw input: " + other)
       }
+      val params = json.asJsObject
+        .fields.get("params")
+        .map(_.convertTo[Map[String, Any]])
+        .getOrElse(Map())
+      result.copy(params = params)
     }
   }
 

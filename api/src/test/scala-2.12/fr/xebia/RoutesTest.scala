@@ -110,6 +110,12 @@ class RoutesTest extends FunSpec
                       )
                     ),
                     Category("vegetable", "http://placeholder.xebia.fr", Map())
+                  ),
+                  Map(
+                    "INPUT_SIZE" -> 224,
+                    "IMAGE_MEAN" -> 224,
+                    "IMAGE_STD" -> 224,
+                    "INPUT_NAME" -> "input"
                   )
                 )
               }
