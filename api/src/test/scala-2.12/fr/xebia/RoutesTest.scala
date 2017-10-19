@@ -129,14 +129,6 @@ class RoutesTest extends FunSpec
               }
             }
           }
-
-          describe("With a model ID that is not a number") {
-            it("should return 400 BadRequest") {
-              Get("/versions/invalid/data") ~> addCredentials(validCredentials) ~> routes ~> check {
-                status should be(StatusCodes.BadRequest)
-              }
-            }
-          }
         }
 
         describe("GET on /version/ID/labels?category=fruit") {
@@ -191,15 +183,6 @@ class RoutesTest extends FunSpec
               }
             }
           }
-
-          describe("With a model ID that is not a number") {
-            val category = "fruit"
-            it("should return 400 BadRequest") {
-              Get(s"/versions/invalid/labels?category=$category") ~> addCredentials(validCredentials) ~> routes ~> check {
-                status should be(StatusCodes.BadRequest)
-              }
-            }
-          }
         }
 
         describe("GET on /version/ID/model") {
@@ -221,14 +204,6 @@ class RoutesTest extends FunSpec
             it("should return HTTP 404 NotFound") {
               Get(s"/versions/123456789/model") ~> addCredentials(validCredentials) ~> routes ~> check {
                 status should be(StatusCodes.NotFound)
-              }
-            }
-          }
-
-          describe("With a model ID that is not a number") {
-            it("should return HTTP 400 BadRequest") {
-              Get(s"/versions/bad_version/model") ~> addCredentials(validCredentials) ~> routes ~> check {
-                status should be(StatusCodes.BadRequest)
               }
             }
           }
@@ -268,14 +243,6 @@ class RoutesTest extends FunSpec
             it("should return HTTP 404 NotFound") {
               Get(s"/versions/123456789/categories") ~> addCredentials(validCredentials) ~> routes ~> check {
                 status should be(StatusCodes.NotFound)
-              }
-            }
-          }
-
-          describe("With a model ID that is not a number") {
-            it("should return HTTP 400 BadRequest") {
-              Get(s"/versions/bad_version/categories") ~> addCredentials(validCredentials) ~> routes ~> check {
-                status should be(StatusCodes.BadRequest)
               }
             }
           }
@@ -324,14 +291,6 @@ class RoutesTest extends FunSpec
             it("should return HTTP 404") {
               Get(s"/versions/123456789/categories/fruit") ~> addCredentials(validCredentials) ~> routes ~> check {
                 status should be(StatusCodes.NotFound)
-              }
-            }
-          }
-
-          describe("With a model ID that is not a number") {
-            it("should return HTTP 400 BadRequest") {
-              Get(s"/versions/bad_version/categories/fruit") ~> addCredentials(validCredentials) ~> routes ~> check {
-                status should be(StatusCodes.BadRequest)
               }
             }
           }
