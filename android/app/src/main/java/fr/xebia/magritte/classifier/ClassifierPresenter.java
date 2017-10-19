@@ -18,7 +18,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class ClassifierPresenter implements ClassifierContract.Presenter {
 
-    private static final double MATCH_THRESHOLD = 0.9;
+    private static final double MATCH_THRESHOLD = 0.6;
     private static final String TAG = ClassifierPresenter.class.getSimpleName();
 
     private Locale desiredLocale;

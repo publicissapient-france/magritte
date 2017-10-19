@@ -15,10 +15,10 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField "String", "API_ENDPOINT", "\"http://magritte-lb-941018124.eu-west-1.elb.amazonaws.com/versions/20171016/\""
+            buildConfigField "String", "API_ENDPOINT", "\"http://magritte-lb-941018124.eu-west-1.elb.amazonaws.com/versions/20170607/\""
         }
         release {
-            buildConfigField "String", "API_ENDPOINT", "\"http://magritte-lb-941018124.eu-west-1.elb.amazonaws.com/versions/20171016/\""
+            buildConfigField "String", "API_ENDPOINT", "\"http://magritte-lb-941018124.eu-west-1.elb.amazonaws.com/versions/20170607/\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
