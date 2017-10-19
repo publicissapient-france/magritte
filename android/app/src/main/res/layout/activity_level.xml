@@ -11,11 +11,11 @@
         android:layout_width="@dimen/level_circle_size"
         android:layout_height="@dimen/level_circle_size"
         android:background="@drawable/level_one_circle"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/level_two"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.15">
+        app:layout_constraintVertical_bias="0.35">
 
         <android.support.v7.widget.AppCompatImageView
             android:layout_width="@dimen/level_icon_size"
@@ -32,8 +32,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.85">
+        app:layout_constraintTop_toBottomOf="@+id/level_one">
 
         <android.support.v7.widget.AppCompatImageView
             android:layout_width="@dimen/level_icon_size"
