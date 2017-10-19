@@ -32,7 +32,7 @@
         android:layout_alignParentBottom="true">
 
         <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/result"
+            android:id="@+id/debugResultTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -57,50 +57,50 @@
                 android:src="@drawable/ic_strawberry_outline"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/apple_iv"
+                app:layout_constraintRight_toLeftOf="@+id/appleIconView"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/apple_iv"
+                android:id="@+id/appleIconView"
                 style="@style/fruitImage"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:src="@drawable/ic_apple_outline"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@+id/strawberry_iv"
-                app:layout_constraintRight_toLeftOf="@+id/grape_iv"
+                app:layout_constraintRight_toLeftOf="@+id/grapeIconView"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/grape_iv"
+                android:id="@+id/grapeIconView"
                 style="@style/fruitImage"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:src="@drawable/ic_grape_outline"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/apple_iv"
-                app:layout_constraintRight_toLeftOf="@+id/kiwi_iv"
+                app:layout_constraintLeft_toRightOf="@+id/appleIconView"
+                app:layout_constraintRight_toLeftOf="@+id/kiwiIconView"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/kiwi_iv"
+                android:id="@+id/kiwiIconView"
                 style="@style/fruitImage"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:src="@drawable/ic_kiwi_outline"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/grape_iv"
-                app:layout_constraintRight_toLeftOf="@+id/banana_iv"
+                app:layout_constraintLeft_toRightOf="@+id/grapeIconView"
+                app:layout_constraintRight_toLeftOf="@+id/bananaIconView"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/banana_iv"
+                android:id="@+id/bananaIconView"
                 style="@style/fruitImage"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:src="@drawable/ic_banana_outline"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/kiwi_iv"
+                app:layout_constraintLeft_toRightOf="@+id/kiwiIconView"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

@@ -13,7 +13,6 @@ import okio.Okio
 import java.io.File
 import java.io.IOException
 
-
 class MagritteRepository(val context: Context,
                          private val service: MagritteService,
                          private val database: MagritteDatabase) {
@@ -75,5 +74,4 @@ class MagritteRepository(val context: Context,
     fun getInitDataLoadingStatus(): Boolean {
         return spHelper.getInitDataStatus()
     }
-
 }

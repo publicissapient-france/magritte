@@ -8,7 +8,8 @@ public enum FruitResource {
     GRAPE(R.drawable.ic_grape_outline, R.drawable.ic_grape_filled, R.string.grape),
     KIWI(R.drawable.ic_kiwi_outline, R.drawable.ic_kiwi_filled, R.string.kiwi),
     BANANA(R.drawable.ic_banana_outline, R.drawable.ic_banana_filled, R.string.banana),
-    STRAWBERRY(R.drawable.ic_strawberry_outline, R.drawable.ic_strawberry_filled, R.string.strawberry);
+    STRAWBERRY(R.drawable.ic_strawberry_outline, R.drawable.ic_strawberry_filled, R.string.strawberry),
+    UNKNOWN(0, 0, 0);
 
     private int outlineRes;
     private int filledRes;

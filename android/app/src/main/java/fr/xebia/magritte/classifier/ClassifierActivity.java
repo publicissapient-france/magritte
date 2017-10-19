@@ -34,6 +34,7 @@ import android.util.Size;
 import android.view.Display;
 import android.widget.Toast;
 
+import org.jetbrains.annotations.NotNull;
 import org.tensorflow.demo.env.ImageUtils;
 
 import java.util.List;
@@ -244,12 +245,6 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     }
 
     @Override
-    public void displayRecognitions(List<Classifier.Recognition> recognitionList) {
-        resultsView.displayResults(recognitionList);
-        computing = false;
-    }
-
-    @Override
     public void displayTopMatch(FruitResource fruit) {
         resultsView.displayTopMatch(fruit);
     }
@@ -265,5 +260,11 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         } else {
             tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
         }
+    }
+
+    @Override
+    public void displayRecognitions(@NotNull List<Classifier.Recognition> recognitionList) {
+        resultsView.displayResults(recognitionList);
+        computing = false;
     }
 }
