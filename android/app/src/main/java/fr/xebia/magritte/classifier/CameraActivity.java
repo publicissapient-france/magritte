@@ -91,12 +91,7 @@ public abstract class CameraActivity extends Activity implements OnImageAvailabl
 
     protected void setFragment() {
         final Fragment fragment = CameraConnectionFragment.newInstance(
-                new CameraConnectionFragment.ConnectionCallback() {
-                    @Override
-                    public void onPreviewSizeChosen(final Size size, final int rotation) {
-                        CameraActivity.this.onPreviewSizeChosen(size, rotation);
-                    }
-                },
+            CameraActivity.this::onPreviewSizeChosen,
                 this, getLayoutId(), getDesiredPreviewFrameSize());
 
         getFragmentManager()

@@ -6,27 +6,32 @@ import android.preference.PreferenceManager
 import fr.xebia.magritte.SP_MAGRITTE_INIT_DATA_LOADED
 import fr.xebia.magritte.SP_MAGRITTE_MODEL_FILE
 
-class SharedPreferenceHelper(val context: Context) {
+class SharedPreferenceHelper(val context: Context
+                             , val modelVersion: String) {
 
     private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     fun storeFile(filePath: String) {
         prefs.edit {
-            put(SP_MAGRITTE_MODEL_FILE to filePath)
+            put(getKeyPerVersion(SP_MAGRITTE_MODEL_FILE) to filePath)
         }
     }
 
     fun getModelFilePath(): String? {
-        return prefs.getString(SP_MAGRITTE_MODEL_FILE, null)
+        return prefs.getString(getKeyPerVersion(SP_MAGRITTE_MODEL_FILE), null)
     }
 
     fun setInitDataStatus(loaded: Boolean) {
         prefs.edit {
-            put(SP_MAGRITTE_INIT_DATA_LOADED to loaded)
+            put(getKeyPerVersion(SP_MAGRITTE_INIT_DATA_LOADED) to loaded)
         }
     }
 
     fun getInitDataStatus(): Boolean {
-        return prefs.getBoolean(SP_MAGRITTE_INIT_DATA_LOADED, false)
+        return prefs.getBoolean(getKeyPerVersion(SP_MAGRITTE_INIT_DATA_LOADED), false)
+    }
+
+    fun getKeyPerVersion(key: String): String {
+        return String.format(key, modelVersion)
     }
 }

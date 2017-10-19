@@ -23,13 +23,14 @@ class Injection {
                     .build()
             val service = Retrofit.Builder()
                     .client(client)
-                    .baseUrl(BuildConfig.API_ENDPOINT)
+                    .baseUrl(String.format(BuildConfig.API_ENDPOINT, MagritteApp.modelVersion))
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(MoshiConverterFactory.create())
                     .build().create(MagritteService::class.java)
 
-            val database = Room.databaseBuilder(context, MagritteDatabase::class.java, MAGRITTE_DATABASE).build()
-            return MagritteRepository(context, service, database)
+            val dbName = String.format(MAGRITTE_DATABASE, MagritteApp.modelVersion)
+            val database = Room.databaseBuilder(context, MagritteDatabase::class.java, dbName).build()
+            return MagritteRepository(context, service, database, MagritteApp.modelVersion)
         }
     }
 }

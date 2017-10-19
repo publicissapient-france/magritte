@@ -73,7 +73,7 @@ class ClassifierPresenter(private val view: ClassifierContract.View, private val
 
     companion object {
 
-        private val MATCH_THRESHOLD = 0.6
+        private val MATCH_THRESHOLD = 0.85
         private val TAG = ClassifierPresenter::class.java.simpleName
     }
 }
