@@ -8,16 +8,8 @@ sbt docker:publishLocal # build image in local repository
 ```
 
 Run in local mode :
-* `export MODELS_PATH=???`
-* Run class `MagritteAPI`
-
-Or :
-* `export MODELS_PATH=???`
-* `sbt run`
-
-## TODO
-
-- include basic authentification
+* Set env var : S3_LOCAL and S3_LOCAL_BUCKET
+* Run test class `fr.xebia.LocalMagritteAPI`
 
 ## Manual deploy on S3
 
