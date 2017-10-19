@@ -15,10 +15,10 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField "String", "API_ENDPOINT", "\"http://magritte-lb-941018124.eu-west-1.elb.amazonaws.com/versions/20170607/\""
+            buildConfigField "String", "API_ENDPOINT", "\"http://magritte-lb-941018124.eu-west-1.elb.amazonaws.com/versions/%s/\""
         }
         release {
-            buildConfigField "String", "API_ENDPOINT", "\"http://magritte-lb-941018124.eu-west-1.elb.amazonaws.com/versions/20170607/\""
+            buildConfigField "String", "API_ENDPOINT", "\"http://magritte-lb-941018124.eu-west-1.elb.amazonaws.com/versions/%s/\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -43,7 +43,7 @@ ext {
 }
 
 dependencies {
-    debugImplementation 'com.facebook.stetho:stetho:1.5.0'
+    implementation 'com.facebook.stetho:stetho:1.5.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
     implementation "com.android.support:support-v4:$supportLibVersion"

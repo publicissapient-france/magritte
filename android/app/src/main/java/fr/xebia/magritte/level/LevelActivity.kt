@@ -17,7 +17,6 @@ import java.util.*
 class LevelActivity : AppCompatActivity(), LevelContract.View {
 
     private var languageChoice: Int = 0
-    private lateinit var spHelper: SharedPreferenceHelper
     private lateinit var presenter: LevelContract.Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +32,6 @@ class LevelActivity : AppCompatActivity(), LevelContract.View {
         level_one.setOnClickListener {
             startClassifierWithPermissionCheck(CATEGORY_FRUIT)
         }
-        spHelper = SharedPreferenceHelper(applicationContext)
     }
 
     @SuppressLint("NeedOnRequestPermissionsResult")
@@ -58,5 +56,4 @@ class LevelActivity : AppCompatActivity(), LevelContract.View {
     override fun displayError() {
         // TODO
     }
-
 }

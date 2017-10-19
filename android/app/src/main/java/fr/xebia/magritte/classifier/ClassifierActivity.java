@@ -25,10 +25,10 @@ import android.media.Image;
 import android.media.Image.Plane;
 import android.media.ImageReader;
 import android.media.ImageReader.OnImageAvailableListener;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Trace;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Size;
 import android.view.Display;
@@ -41,19 +41,13 @@ import java.util.List;
 import java.util.Locale;
 
 import fr.xebia.magritte.ConstantKt;
+import fr.xebia.magritte.MagritteApp;
 import fr.xebia.magritte.R;
 import fr.xebia.magritte.model.FruitResource;
 import timber.log.Timber;
 
 public class ClassifierActivity extends CameraActivity implements OnImageAvailableListener,
     ClassifierContract.View {
-
-    private static final int INPUT_SIZE = 299;
-    private static final int IMAGE_MEAN = 128;
-    private static final float IMAGE_STD = 128;
-    private static final String INPUT_NAME = "Mul";
-    private static final String OUTPUT_NAME_FRUITS = "final_result_fruits";
-    private static final String OUTPUT_NAME_VEGETABLES = "final_result_vegetables";
 
     private static final boolean SAVE_PREVIEW_BITMAP = false;
     private static final boolean MAINTAIN_ASPECT = true;
@@ -73,22 +67,25 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     private Matrix cropToFrameTransform;
 
     private ResultsView resultsView;
+    private ClassifierConfiguration classifierConfiguration;
+
+    private List<String> labels;
+    private String modelFile;
+    private Locale desiredLocale;
     private TextToSpeech tts;
 
     private ClassifierContract.Presenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        classifierConfiguration = MagritteApp.configuration;
         super.onCreate(savedInstanceState);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            int currentMode = bundle.getInt(ConstantKt.MODEL_TYPE);
             int languageChoice = bundle.getInt(ConstantKt.LANGUAGE_CHOICE);
-            List<String> labels = bundle.getStringArrayList(ConstantKt.MODEL_LABELS);
-            String modelFile = bundle.getString(ConstantKt.MODEL_FILE);
-
-            String outputName = currentMode == 0 ? OUTPUT_NAME_FRUITS : OUTPUT_NAME_VEGETABLES;
-            final Locale desiredLocale = getDesiredLocale(languageChoice);
+            labels = bundle.getStringArrayList(ConstantKt.MODEL_LABELS);
+            modelFile = bundle.getString(ConstantKt.MODEL_FILE);
+            desiredLocale = getDesiredLocale(languageChoice);
 
             // TODO add tss language availability check
             tts = new TextToSpeech(this, status -> {
@@ -101,20 +98,19 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                     Toast.makeText(ClassifierActivity.this, "Initilization Failed!", Toast.LENGTH_LONG).show();
                 }
             });
-
-
-            Classifier classifier = TensorFlowImageClassifier.create(
-                getAssets(),
-                modelFile,
-                labels,
-                INPUT_SIZE,
-                IMAGE_MEAN,
-                IMAGE_STD,
-                INPUT_NAME,
-                outputName);
-
-            presenter = new ClassifierPresenter(this, desiredLocale, classifier);
         }
+
+        Classifier classifier = TensorFlowImageClassifier.create(
+            getAssets(),
+            modelFile,
+            labels,
+            classifierConfiguration.getInputSize(),
+            classifierConfiguration.getImageMean(),
+            classifierConfiguration.getImageStd(),
+            classifierConfiguration.getInputName(),
+            classifierConfiguration.getOutputName());
+
+        presenter = new ClassifierPresenter(this, desiredLocale, classifier);
     }
 
     private Locale getDesiredLocale(int languageChoice) {
@@ -147,7 +143,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
 
     @Override
     protected int getDesiredPreviewFrameSize() {
-        return INPUT_SIZE;
+        return classifierConfiguration.getInputSize();
     }
 
     @Override
@@ -166,13 +162,15 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         Timber.i("Initializing at size %dx%d", previewWidth, previewHeight);
         rgbBytes = new int[previewWidth * previewHeight];
         rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
-        croppedBitmap = Bitmap.createBitmap(INPUT_SIZE, INPUT_SIZE, Config.ARGB_8888);
+        croppedBitmap = Bitmap.createBitmap(classifierConfiguration.getInputSize(), classifierConfiguration.getInputSize(), Config.ARGB_8888);
 
         frameToCropTransform =
             ImageUtils.getTransformationMatrix(
                 previewWidth, previewHeight,
-                INPUT_SIZE, INPUT_SIZE,
-                sensorOrientation, MAINTAIN_ASPECT);
+                classifierConfiguration.getInputSize(),
+                classifierConfiguration.getInputSize(),
+                sensorOrientation, MAINTAIN_ASPECT
+            );
 
         cropToFrameTransform = new Matrix();
         frameToCropTransform.invert(cropToFrameTransform);
@@ -239,27 +237,24 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         Trace.endSection();
     }
 
+    @NonNull
     @Override
     public Context getContext() {
         return this;
     }
 
     @Override
-    public void displayTopMatch(FruitResource fruit) {
+    public void displayTopMatch(@NonNull FruitResource fruit) {
         resultsView.displayTopMatch(fruit);
     }
 
     @Override
-    public void speakResult(String title) {
+    public void speakResult(@NonNull String title) {
         speak(title);
     }
 
     private void speak(String text) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
-        } else {
-            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-        }
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
     }
 
     @Override

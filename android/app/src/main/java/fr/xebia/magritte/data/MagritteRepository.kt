@@ -15,9 +15,10 @@ import java.io.IOException
 
 class MagritteRepository(val context: Context,
                          private val service: MagritteService,
-                         private val database: MagritteDatabase) {
+                         private val database: MagritteDatabase,
+                         private val modelVersion: String) {
 
-    private var spHelper: SharedPreferenceHelper = SharedPreferenceHelper(context)
+    private var spHelper: SharedPreferenceHelper = SharedPreferenceHelper(context, modelVersion)
 
     fun getData(): Observable<MagritteData> {
         return service.getData()
@@ -45,7 +46,7 @@ class MagritteRepository(val context: Context,
         return database.magritteLabelDao().getAllLabels(category)
     }
 
-    private val MAGRITTE_MODEL_FILE_NAME: String = "magritte_model.pb"
+    private val MAGRITTE_MODEL_FILE_NAME: String = String.format("magritte_model_%s.pb", modelVersion)
 
     fun saveModelFileToDisk(responseBody: ResponseBody): Observable<File> {
         return Observable.create { emitter ->
