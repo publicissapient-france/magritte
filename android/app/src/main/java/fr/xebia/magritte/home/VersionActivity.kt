@@ -27,9 +27,15 @@ class VersionActivity : AppCompatActivity() {
             MagritteApp.modelVersion = "20171016"
             startActivity(Intent(this, MainActivity::class.java))
         }
-        modelMobileNetsQuantized.setOnClickListener {
+        modelMobileNets50.setOnClickListener {
             MagritteApp.configuration = mobilenetsModelConf
             MagritteApp.modelVersion = "20171021"
+            startActivity(Intent(this, MainActivity::class.java))
+        }
+
+        modelMobileNets25.setOnClickListener {
+            MagritteApp.configuration = mobilenetsModelConf
+            MagritteApp.modelVersion = "20171022"
             startActivity(Intent(this, MainActivity::class.java))
         }
     }
