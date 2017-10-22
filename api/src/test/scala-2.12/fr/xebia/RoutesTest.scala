@@ -1,16 +1,12 @@
 package fr.xebia
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.headers.BasicHttpCredentials
+import akka.http.scaladsl.model.{ContentTypes, MediaTypes, StatusCodes}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import com.amazonaws.auth.{AWSStaticCredentialsProvider, AnonymousAWSCredentials}
-import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration
-import com.amazonaws.services.s3.{AmazonS3, AmazonS3ClientBuilder}
 import fr.xebia.data.Placeholders
 import fr.xebia.model._
 import fr.xebia.routes.VersionRoutes
-import io.findify.s3mock.S3Mock
 import org.scalatest.{BeforeAndAfterAll, FunSpec, Matchers}
 import spray.json.DefaultJsonProtocol
 
@@ -20,19 +16,13 @@ class RoutesTest extends FunSpec
   with SprayJsonSupport
   with DefaultJsonProtocol
   with BeforeAndAfterAll
-  with Placeholders {
+  with Placeholders
+  with ModelMock {
 
-  val api = S3Mock(port = 8001, dir = "src/test/")
-  api.start
-  val endpoint = new EndpointConfiguration("http://localhost:8001", "us-west-2")
-  val s3Client: AmazonS3 = AmazonS3ClientBuilder
-    .standard
-    .withPathStyleAccessEnabled(true)
-    .withEndpointConfiguration(endpoint)
-    .withCredentials(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()))
-    .build
-  implicit val bucketName = "resources"
-  implicit val s3Model = new S3Model(s3Client)
+  val apple = "apple"
+  val banana = "banana"
+  val localeFr = "fr"
+  val localeEn = "en"
 
   describe("Routes") {
     val routes = new VersionRoutes().securedRoute
@@ -92,24 +82,24 @@ class RoutesTest extends FunSpec
                   "2017/02/20 15:47:10",
                   List(
                     Category(
-                      "fruit",
-                      "http://placeholder.xebia.fr",
+                      localeFr + "uit",
+                      urlPlaceholder,
                       Map(
-                        "apple" -> ModelClass(
-                          "http://placeholder.xebia.fr",
+                        apple -> ModelClass(
+                          urlPlaceholder,
                           List(
-                            Translation("fr", "pomme"),
-                            Translation("en", "apple")
+                            Translation(localeFr, "pomme"),
+                            Translation(localeEn, apple)
                           )),
-                        "banana" -> ModelClass(
-                          "http://placeholder.xebia.fr",
+                        banana -> ModelClass(
+                          urlPlaceholder,
                           List(
-                            Translation("fr", "banane"),
-                            Translation("en", "banana")
+                            Translation(localeFr, "banane"),
+                            Translation(localeEn, banana)
                           ))
                       )
                     ),
-                    Category("vegetable", "http://placeholder.xebia.fr", Map())
+                    Category("vegetable", urlPlaceholder, Map())
                   ),
                   Map(
                     "INPUT_SIZE" -> 224,
@@ -136,27 +126,30 @@ class RoutesTest extends FunSpec
             val version = 20170607
 
             describe("With a known category") {
-              it("should retun category details") {
-                val category = "fruit"
-                Get(s"/versions/$version/labels/json?category=$category") ~> addCredentials(validCredentials) ~> routes ~> check {
+              val category = "fruit"
+              it("should return category details as JSON") {
+
+                Get(s"/versions/$version/labels?category=$category") ~>
+                  addHeader("accept", MediaTypes.`application/json`.value) ~>
+                  addCredentials(validCredentials) ~>
+                  routes ~> check {
+
                   status should be(StatusCodes.OK)
-                  responseAs[List[Label]] shouldBe List(
-                    Label(0, "kiwi"),
-                    Label(1, "grape"),
-                    Label(2, "apple"),
-                    Label(3, "plum"),
-                    Label(4, "strawberry"),
-                    Label(5, "mango"),
-                    Label(6, "pineapple"),
-                    Label(7, "orange"),
-                    Label(8, "raspberry"),
-                    Label(9, "banana")
-                  )
+                  val fruits = List("kiwi", "grape", apple, "plum", "strawberry", "mango", "pineapple", "orange", "raspberry", banana)
+                  responseAs[List[Label]] shouldBe (0 to 9).zip(fruits).map {
+                    case (idx, label) => Label(idx, label)
+                  }
                 }
-                Get(s"/versions/$version/labels/file?category=$category") ~> addCredentials(validCredentials) ~> routes ~> check {
+              }
+              it("should return category details as File") {
+
+                Get(s"/versions/$version/labels?category=$category") ~>
+                  addHeader("accept", MediaTypes.`application/octet-stream`.value) ~>
+                  addCredentials(validCredentials) ~>
+                  routes ~> check {
+
                   status should be(StatusCodes.OK)
-                  responseEntity.contentType.mediaType.mainType shouldBe "application"
-                  responseEntity.contentType.mediaType.subType shouldBe "octet-stream"
+                  responseEntity.contentType shouldBe ContentTypes.`application/octet-stream`
                   responseEntity.contentLengthOption shouldBe defined
                   responseEntity.contentLengthOption.get shouldBe 73
                   header("Content-Disposition") shouldBe defined
@@ -217,23 +210,23 @@ class RoutesTest extends FunSpec
                 responseAs[List[Category]] should contain theSameElementsAs List(
                   Category(
                     "fruit",
-                    "http://placeholder.xebia.fr",
+                    urlPlaceholder,
                     Map(
-                      "apple" -> ModelClass(
-                        "http://placeholder.xebia.fr",
+                      apple -> ModelClass(
+                        urlPlaceholder,
                         List(
                           Translation("fr", "pomme"),
-                          Translation("en", "apple")
+                          Translation("en", apple)
                         )),
-                      "banana" -> ModelClass(
-                        "http://placeholder.xebia.fr",
+                      banana -> ModelClass(
+                        urlPlaceholder,
                         List(
                           Translation("fr", "banane"),
-                          Translation("en", "banana")
+                          Translation("en", banana)
                         ))
                     )
                   ),
-                  Category("vegetable", "http://placeholder.xebia.fr", Map())
+                  Category("vegetable", urlPlaceholder, Map())
                 )
               }
             }
@@ -258,19 +251,19 @@ class RoutesTest extends FunSpec
                   status should be(StatusCodes.OK)
                   responseAs[Category] shouldBe Category(
                     "fruit",
-                    "http://placeholder.xebia.fr",
+                    urlPlaceholder,
                     Map(
-                      "apple" -> ModelClass(
-                        "http://placeholder.xebia.fr",
+                      apple -> ModelClass(
+                        urlPlaceholder,
                         List(
                           Translation("fr", "pomme"),
-                          Translation("en", "apple")
+                          Translation("en", apple)
                         )),
-                      "banana" -> ModelClass(
-                        "http://placeholder.xebia.fr",
+                      banana -> ModelClass(
+                        urlPlaceholder,
                         List(
                           Translation("fr", "banane"),
-                          Translation("en", "banana")
+                          Translation("en", banana)
                         ))
                     )
                   )

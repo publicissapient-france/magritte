@@ -26,9 +26,7 @@
 
   **Optional:**
 
-  NOT SUPPORTED YET : currently, should call endpoint `/versions/:version/labels/file?category:category`
-
-  `accept:mime` The format to retrieve content.
+  `accept: mime` The format to retrieve content.
   Supported are
     * `application/json`
     * `application/octet-stream`

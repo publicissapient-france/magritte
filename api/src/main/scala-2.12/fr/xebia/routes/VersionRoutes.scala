@@ -4,7 +4,7 @@ import akka.http.javadsl.model.headers.ContentDisposition
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.headers.ContentDispositionTypes.attachment
 import akka.http.scaladsl.model.headers.`Content-Disposition`
-import akka.http.scaladsl.model.{ContentType, HttpHeader, MediaType, StatusCodes}
+import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives.{complete, get, _}
 import akka.http.scaladsl.server.PathMatchers.Segment
 import akka.http.scaladsl.server.{PathMatcher, Route}
@@ -47,26 +47,24 @@ class VersionRoutes(implicit val s3Client: S3Model, val routingSettings: Routing
           }
         } ~
         path("versions" / Segment / "labels") { modelVersion =>
-          jsonCategory(modelVersion)
-        } ~
-        path("versions" / Segment / "labels" / "json") { modelVersion =>
-          jsonCategory(modelVersion)
-        } ~
-        path("versions" / Segment / "labels" / "file") { modelVersion =>
           parameters("category") { category =>
-            get {
-              findModel(modelVersion)
-                .flatMap((model: Model) => Model.labelFile(model, category))
-                .map(file => {
-                  respondWithHeader(`Content-Disposition`(attachment, Map("filename" -> s"labels_$category.txt"))) {
-                    getFromFile(
-                      file,
-                      ContentType(
-                        MediaType.applicationBinary("octet-stream", MediaType.NotCompressible)
-                      )
-                    )
-                  }
-                }).getOrElse(notFound)
+            optionalHeaderValueByName("accept") { headerValue =>
+              val model = findModel(modelVersion)
+              headerValue match {
+                case Some(MediaTypes.`application/octet-stream`.value) =>
+                  model
+                    .flatMap((model: Model) => Model.labelFile(model, category))
+                    .map(file => {
+                      respondWithHeader(`Content-Disposition`(attachment, Map("filename" -> s"labels_$category.txt"))) {
+                        getFromFile(file, ContentTypes.`application/octet-stream`)
+                      }
+                    }).getOrElse(notFound)
+                case _ =>
+                  model
+                    .flatMap(Model.listLabels(_, category))
+                    .map(complete(_))
+                    .getOrElse(notFound)
+              }
             }
           }
         } ~
