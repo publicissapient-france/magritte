@@ -1,4 +1,4 @@
-Magritte Model Training
+Magritte model training
 =======================
 
 This folder contains scripts for retraining and optimizing TensorFlow models for Android & iOS.
@@ -8,14 +8,15 @@ Place your raw images under `/data` folder, for example: for fruit category, pla
 # Configure category & architecture
 
 Configure the category and model architecure you want to use:
+
 ```
 CATEGORY="fruits"
 ARCHITECTURE="mobilenet_1.0_224_quantized"
 ```
 
-# Transfer learning
+# Transfer learning: retrain the model
 
-Retrain model with `MobileNet_v1_1.0_224`, you can launch following script in a terminal from the root of this folder:
+Retrain model with your chosen architecture, launch following script to retrain the model for the chosen category:
 
 ```
 $ ./magritte_retrain.sh
@@ -24,8 +25,6 @@ $ ./magritte_retrain.sh
 # Optimize the model
 
 ## For TensorFlow Mobile
-
-Reference:
 
 ```
 $ ./magritte_optimize_tf_mobile.sh
@@ -41,4 +40,10 @@ $ ./magritte_convert_tf_lite.sh
 
 # References
 
+- [TensorFlow For Poets
+](https://codelabs.developers.google.com/codelabs/tensorflow-for-poets/index.html#0)
+- [TensorFlow for Poets 2: Optimize for Mobile
+](https://codelabs.developers.google.com/codelabs/tensorflow-for-poets-2/#0)
+- [TensorFlow for Poets 2: TFLite
+](https://codelabs.developers.google.com/codelabs/tensorflow-for-poets-2-tflite/#0)
 
