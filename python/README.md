@@ -1,21 +1,44 @@
-## Magritte Model Training
+Magritte Model Training
+=======================
 
-Train and optimize a TensorFlow model for image recognition in smartphone app.
+This folder contains scripts for retraining and optimizing TensorFlow models for Android & iOS.
 
-### Run Transfer Learning
-```
-./script/launch_transfer_learning.sh
-```
+Place your raw images under `/data` folder, for example: for fruit category, place all the apple images here `/data/fruits/apple` 
 
-### Optimize the model
-##### Optimize for inference
-This step will remove all unused operations in the graph
+# Configure category & architecture
+
+Configure the category and model architecure you want to use:
 ```
-python magritte_training/optimize/optimize_for_inference.py --input_model_name="input_model_name.pb" --output_model_name="optimized_model_name.pb"
+CATEGORY="fruits"
+ARCHITECTURE="mobilenet_1.0_224_quantized"
 ```
 
-##### Quantize the weights
-Quantize the float weights to eight-bits to shrink the model size
+# Transfer learning
+
+Retrain model with `MobileNet_v1_1.0_224`, you can launch following script in a terminal from the root of this folder:
+
 ```
-python magritte_training/optimize/quantize.py --input="your_input_model.pb" --output_node_names="final_result" --output="your_output_model.pb" --mode=weights
+$ ./magritte_retrain.sh
 ```
+
+# Optimize the model
+
+## For TensorFlow Mobile
+
+Reference:
+
+```
+$ ./magritte_optimize_tf_mobile.sh
+```
+
+# Convert to model to TFLite format
+
+TFLite uses a different serialization format from regular TensorFlow. TensorFlow uses Protocol Buffers, while TFLite uses FlatBuffers.
+
+```
+$ ./magritte_convert_tf_lite.sh
+```
+
+# References
+
+
