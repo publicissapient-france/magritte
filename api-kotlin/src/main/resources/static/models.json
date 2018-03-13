@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "name": "TF Mobile",
+    "description": "Retrained with Mobilenet_v1_1.0_224",
+    "model_file": "/android/models_tf_mobile.pb",
+    "model_type": "tfmobile",
+    "configuration": {
+      "input_size": 224,
+      "image_mean": 128,
+      "image_std": 128,
+      "input_name": "Mul",
+      "output_name": "final_result_fruits"
+    }
+  },
+  {
+    "id": 2,
+    "name": "TF Lite",
+    "description": "Retrained with Mobilenet_v1_1.0_224",
+    "model_file": "/android/models_tf_lite.lite",
+    "model_type": "tflite",
+    "configuration": {
+      "input_size": 224,
+      "image_mean": 128,
+      "image_std": 128,
+      "input_name": "Mul",
+      "output_name": "final_result_fruits"
+    }
+  }
+]
