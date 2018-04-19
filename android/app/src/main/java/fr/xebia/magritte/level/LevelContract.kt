@@ -11,6 +11,6 @@ interface LevelContract {
 
     interface Presenter {
 
-        fun loadData(category: String)
+        fun loadData(modelId: String, category: String)
     }
 }

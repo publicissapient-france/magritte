@@ -41,9 +41,11 @@ import java.util.List;
 import java.util.Locale;
 
 import fr.xebia.magritte.ConstantKt;
-import fr.xebia.magritte.MagritteApp;
+import fr.xebia.magritte.Dependency;
 import fr.xebia.magritte.R;
 import fr.xebia.magritte.model.FruitResource;
+import fr.xebia.magritte.model.MagritteConfiguration;
+import fr.xebia.magritte.model.MagritteModel;
 import timber.log.Timber;
 
 public class ClassifierActivity extends CameraActivity implements OnImageAvailableListener,
@@ -67,7 +69,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     private Matrix cropToFrameTransform;
 
     private ResultsView resultsView;
-    private ClassifierConfiguration classifierConfiguration;
+    private MagritteConfiguration classifierConfiguration;
 
     private List<String> labels;
     private String modelFile;
@@ -78,13 +80,16 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        classifierConfiguration = MagritteApp.configuration;
+        MagritteModel currentModel = Dependency.INSTANCE.get(MagritteModel.class);
+        classifierConfiguration = currentModel.getConfiguration();
+
         super.onCreate(savedInstanceState);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             int languageChoice = bundle.getInt(ConstantKt.LANGUAGE_CHOICE);
             labels = bundle.getStringArrayList(ConstantKt.MODEL_LABELS);
             modelFile = bundle.getString(ConstantKt.MODEL_FILE);
+            Timber.d("Model file $modelFile");
             desiredLocale = getDesiredLocale(languageChoice);
 
             // TODO add tss language availability check

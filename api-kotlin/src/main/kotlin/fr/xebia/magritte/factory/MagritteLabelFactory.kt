@@ -6,7 +6,7 @@ class MagritteLabelFactory {
 
     fun getLabels(): List<MagritteLabel> {
         val labels = mutableListOf<MagritteLabel>()
-        val inputStream = this::class.java.classLoader.getResource("static/labels.txt").openStream()
+        val inputStream = this::class.java.classLoader.getResource("labels.txt").openStream()
         inputStream.bufferedReader().lines().forEach {
             labels.add(MagritteLabel(it))
         }

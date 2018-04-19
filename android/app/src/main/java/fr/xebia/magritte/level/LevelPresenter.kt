@@ -9,8 +9,8 @@ class LevelPresenter(val view: LevelContract.View, private val repository: Magri
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    override fun loadData(category: String) {
-        val filePath = repository.getModelFilePath()
+    override fun loadData(modelId: String, category: String) {
+        val filePath = repository.getModelFilePath(modelId)
         compositeDisposable.add(
                 repository.readLabels(category)
                         .subscribeOn(Schedulers.io())
@@ -19,6 +19,5 @@ class LevelPresenter(val view: LevelContract.View, private val repository: Magri
                                 { view.displayClassifier(filePath, it.map { it.value }) }
                         )
         )
-
     }
 }

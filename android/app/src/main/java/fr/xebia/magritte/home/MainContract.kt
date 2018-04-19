@@ -2,6 +2,7 @@ package fr.xebia.magritte.home
 
 import fr.xebia.magritte.BasePresenter
 import fr.xebia.magritte.BaseView
+import fr.xebia.magritte.model.MagritteModel
 
 interface MainContract {
 
@@ -16,6 +17,6 @@ interface MainContract {
 
     interface Presenter : BasePresenter {
 
-        fun loadInitData()
+        fun loadInitData(model: MagritteModel)
     }
 }

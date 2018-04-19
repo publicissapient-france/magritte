@@ -1,78 +1,31 @@
 package fr.xebia.magritte.data
 
-import android.content.Context
-import fr.xebia.magritte.data.local.MagritteDatabase
 import fr.xebia.magritte.data.local.MagritteLabel
-import fr.xebia.magritte.model.MagritteData
+import fr.xebia.magritte.model.MagritteModel
+import fr.xebia.magritte.model.MagritteVersion
 import fr.xebia.magritte.model.TFLabel
-import fr.xebia.magritte.service.MagritteService
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import okhttp3.ResponseBody
-import okio.Okio
 import java.io.File
-import java.io.IOException
 
-class MagritteRepository(val context: Context,
-                         private val service: MagritteService,
-                         private val database: MagritteDatabase,
-                         private val modelVersion: String) {
+interface MagritteRepository {
 
-    private var spHelper: SharedPreferenceHelper = SharedPreferenceHelper(context, modelVersion)
+    // remote
+    fun getVersion(): Observable<MagritteVersion>
+    fun getModels(): Observable<List<MagritteModel>>
+    fun getModelLabel(category: String): Observable<List<TFLabel>>
+    fun downloadModelFile(modelPath: String): Observable<ResponseBody>
 
-    fun getData(): Observable<MagritteData> {
-        return service.getData()
-    }
+    // local
+    fun storeModels(model: MagritteModel) : Observable<Unit>?
 
-    fun getModelLabel(category: String): Observable<List<TFLabel>> {
-        return service.getLabels(category)
-    }
+    fun insertLabels(category: String, labels: List<TFLabel>): Observable<Unit>?
+    fun readLabels(category: String): Flowable<List<MagritteLabel>>
+    fun saveModelFileToDisk(responseBody: ResponseBody, modelId: String): Observable<File>
+    fun getModelFilePath(modelId: String): String?
 
-    fun getModelFilePath(): String? {
-        return spHelper.getModelFilePath()
-    }
+    fun setInitDataLoadingStatus(loaded: Boolean)
+    fun getInitDataLoadingStatus(): Boolean
 
-    fun getModelFile(): Observable<ResponseBody> {
-        return service.getModelFile()
-    }
-
-    fun insertLabels(category: String, labels: List<TFLabel>): Observable<Unit>? {
-        return Observable.fromCallable {
-            database.magritteLabelDao().insertAll(labels.map { MagritteLabel(it.value, category) })
-        }
-    }
-
-    fun readLabels(category: String): Flowable<List<MagritteLabel>> {
-        return database.magritteLabelDao().getAllLabels(category)
-    }
-
-    private val MAGRITTE_MODEL_FILE_NAME: String = String.format("magritte_model_%s.pb", modelVersion)
-
-    fun saveModelFileToDisk(responseBody: ResponseBody): Observable<File> {
-        return Observable.create { emitter ->
-            try {
-                val destinationFile = File("${context.filesDir}${File.separator}${MAGRITTE_MODEL_FILE_NAME}")
-
-                val bufferedSink = Okio.buffer(Okio.sink(destinationFile))
-                bufferedSink.writeAll(responseBody.source())
-                bufferedSink.close()
-
-                spHelper.storeFile(destinationFile.absolutePath)
-
-                emitter.onNext(destinationFile)
-                emitter.onComplete()
-            } catch (e: IOException) {
-                e.printStackTrace()
-                emitter.onError(e)
-            }
-        }
-    }
-
-    fun setInitDataLoadingStatus(loaded: Boolean) {
-        spHelper.setInitDataStatus(loaded)
-    }
-
-    fun getInitDataLoadingStatus(): Boolean {
-        return spHelper.getInitDataStatus()
-    }
 }

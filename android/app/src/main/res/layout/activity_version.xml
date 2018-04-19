@@ -4,46 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fr.xebia.magritte.home.VersionActivity">
+    tools:context="fr.xebia.magritte.version.VersionActivity">
 
     <android.support.v7.widget.AppCompatButton
-        android:id="@+id/modelNormal"
+        android:id="@+id/tfMobile"
         android:layout_width="@dimen/button_width"
         android:layout_height="wrap_content"
-        android:text="@string/model_normal"
-        app:layout_constraintBottom_toTopOf="@+id/modelMobileNets"
+        android:enabled="false"
+        android:text="@string/tf_mobile"
+        app:layout_constraintBottom_toTopOf="@+id/tfLite"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.AppCompatButton
-        android:id="@+id/modelMobileNets"
+        android:id="@+id/tfLite"
         android:layout_width="@dimen/button_width"
         android:layout_height="wrap_content"
-        android:text="@string/model_mobilenets"
-        app:layout_constraintBottom_toTopOf="@+id/modelMobileNets50"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/modelNormal" />
-
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/modelMobileNets50"
-        android:layout_width="@dimen/button_width"
-        android:layout_height="wrap_content"
-        android:text="@string/model_mobilenets_0_5"
-        app:layout_constraintBottom_toTopOf="@+id/modelMobileNets25"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/modelMobileNets" />
-
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/modelMobileNets25"
-        android:layout_width="@dimen/button_width"
-        android:layout_height="wrap_content"
-        android:text="@string/model_mobilenets_0_25"
+        android:enabled="false"
+        android:text="@string/tf_lite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/modelMobileNets50" />
+        app:layout_constraintTop_toBottomOf="@+id/tfMobile" />
 
 </android.support.constraint.ConstraintLayout>

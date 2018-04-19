@@ -1,11 +1,13 @@
-package fr.xebia.magritte.language
+package fr.xebia.magritte.version
 
 import fr.xebia.magritte.data.MagritteRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class LanguagePresenter(val view: LanguageContract.View, private val repository: MagritteRepository) : LanguageContract.Presenter {
+class VersionPresenter(val view: VersionContract.View,
+                       private val repository: MagritteRepository)
+    : VersionContract.Presenter {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
@@ -18,11 +20,14 @@ class LanguagePresenter(val view: LanguageContract.View, private val repository:
     }
 
     override fun unsubscribe() {
+        compositeDisposable.dispose()
         compositeDisposable.clear()
     }
 
     override fun getData() {
-        compositeDisposable.add(repository.getData()
+        // TODO cache json in case of offline
+        compositeDisposable.add(repository.getVersion()
+                .flatMap { repository.getModels() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(

@@ -2,10 +2,10 @@ package fr.xebia.magritte.home
 
 import fr.xebia.magritte.CATEGORY_FRUIT
 import fr.xebia.magritte.data.MagritteRepository
+import fr.xebia.magritte.model.MagritteModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-
 
 class MainPresenter(val view: MainContract.View,
                     private val repository: MagritteRepository) : MainContract.Presenter {
@@ -24,12 +24,12 @@ class MainPresenter(val view: MainContract.View,
         compositeDisposable.clear()
     }
 
-    override fun loadInitData() {
+    override fun loadInitData(model: MagritteModel) {
         if (!repository.getInitDataLoadingStatus()) {
             view.displayLoading()
             compositeDisposable.add(
-                    repository.getModelFile()
-                            .flatMap { repository.saveModelFileToDisk(it) }
+                    repository.downloadModelFile(model.modelFilePath)
+                            .flatMap { repository.saveModelFileToDisk(it, model.id) }
                             .flatMap { repository.getModelLabel(CATEGORY_FRUIT) }
                             .flatMap { repository.insertLabels(CATEGORY_FRUIT, it) }
                             .subscribeOn(Schedulers.io())

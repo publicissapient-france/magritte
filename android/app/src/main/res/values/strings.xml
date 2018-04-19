@@ -40,8 +40,6 @@
     <string name="data_init_success">Data initialized with success.</string>
     <string name="data_init_error">Data initialization failed.</string>
     <string name="retry">Retry</string>
-    <string name="model_normal">Model (Normal)</string>
-    <string name="model_mobilenets">Model (MobileNets–1.0-224)</string>
-    <string name="model_mobilenets_0_5">Model (MobileNets-0.5-224)</string>
-    <string name="model_mobilenets_0_25">Model (MobileNets-0.25-224)</string>
+    <string name="tf_mobile">TF Mobile </string>
+    <string name="tf_lite">TF Lite</string>
 </resources>

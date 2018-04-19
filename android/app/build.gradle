@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "26.0.3"
+    buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "fr.xebia.magritte"
         minSdkVersion 21
@@ -15,10 +15,14 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField "String", "API_ENDPOINT", "\"http://magritte-lb-941018124.eu-west-1.elb.amazonaws.com/versions/%s/\""
+            buildConfigField 'int', 'API_VERSION', '1'
+            buildConfigField "String", "API_ENDPOINT", "\"http://10.0.13.59:8080/\""
+            buildConfigField 'int', 'DB_VERSION', '1'
         }
         release {
-            buildConfigField "String", "API_ENDPOINT", "\"http://magritte-lb-941018124.eu-west-1.elb.amazonaws.com/versions/%s/\""
+            buildConfigField 'int', 'API_VERSION', '1'
+            buildConfigField "String", "API_ENDPOINT", "\"http://magritte.xebia.fr/\""
+            buildConfigField 'int', 'DB_VERSION', '1'
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -35,39 +39,45 @@ android {
     }
 }
 
+androidExtensions {
+    experimental = true
+}
+
 ext {
-    supportLibVersion = "27.1.0"
+    supportLibVersion = "27.1.1"
     retrofitVersion = "2.3.0"
-    permissionsdispatcherVersion = "3.0.1"
+    permissionsdispatcherVersion = "3.2.0"
     okhttpVersion = "3.9.0"
+    androidArchVersion = "1.1.0-beta2"
 }
 
 dependencies {
-    debugImplementation 'com.facebook.stetho:stetho:1.5.0'
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
     implementation "com.android.support:support-v4:$supportLibVersion"
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:cardview-v7:$supportLibVersion"
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation "com.android.support:support-v13:$supportLibVersion"
 
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.3'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
     implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
     implementation 'com.squareup.moshi:moshi-kotlin:1.5.0'
-    implementation 'com.jakewharton.timber:timber:4.6.0'
+    implementation 'com.jakewharton.timber:timber:4.7.0'
 
+    // tensorflow
     implementation 'org.tensorflow:tensorflow-android:1.6.0'
+    implementation 'org.tensorflow:tensorflow-lite:0.1.8-rc0'
 
     // Room
-    implementation 'android.arch.persistence.room:runtime:1.0.0'
-    implementation 'android.arch.persistence.room:rxjava2:1.0.0'
-    kapt "android.arch.persistence.room:compiler:1.0.0"
+    implementation "android.arch.persistence.room:runtime:$androidArchVersion"
+    implementation "android.arch.persistence.room:rxjava2:$androidArchVersion"
+    kapt "android.arch.persistence.room:compiler:$androidArchVersion"
 
     testImplementation 'junit:junit:4.12'
 

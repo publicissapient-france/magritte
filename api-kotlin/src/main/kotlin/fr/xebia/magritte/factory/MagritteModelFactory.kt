@@ -9,7 +9,7 @@ import java.util.*
 class MagritteModelFactory {
 
     fun getModels(): List<MagritteModel> {
-        val inputStream = this::class.java.classLoader.getResource("static/models.json").openStream()
+        val inputStream = this::class.java.classLoader.getResource("models.json").openStream()
         val gson = Gson()
         val reader = JsonReader(InputStreamReader(inputStream, "UTF-8"))
         val models = ArrayList<MagritteModel>()

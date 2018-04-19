@@ -1,11 +1,11 @@
 package fr.xebia.magritte.model
 
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 
 enum class TFModelType(val typeName: String) {
-    @SerializedName("tfmobile")
+    @Json(name = "tfmobile")
     TF_MOBILE("tfmobile"),
 
-    @SerializedName("tflite")
+    @Json(name = "tflite")
     TF_LITE("tflite")
 }

@@ -14,4 +14,6 @@
     <color name="colorFrance">#3CB3DC</color>
     <color name="colorChina">#FFCC36</color>
     <color name="colorItaly">#009246</color>
+
+    <color name="control_background">#cc4285f4</color>
 </resources>

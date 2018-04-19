@@ -1,19 +1,21 @@
-package fr.xebia.magritte.language
+package fr.xebia.magritte.version
 
 import fr.xebia.magritte.BasePresenter
 import fr.xebia.magritte.BaseView
-import fr.xebia.magritte.model.MagritteData
+import fr.xebia.magritte.model.MagritteModel
+import fr.xebia.magritte.model.MagritteVersion
 
-interface LanguageContract {
+interface VersionContract {
 
     interface View : BaseView<Presenter> {
 
-        fun displayResult(data: MagritteData)
+        fun displayResult(models: List<MagritteModel>)
 
         fun displayError(message: String)
     }
 
     interface Presenter : BasePresenter {
+
         fun getData()
     }
 }

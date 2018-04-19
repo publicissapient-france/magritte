@@ -1,29 +1,29 @@
 [
   {
-    "id": 1,
+    "id": "1",
     "name": "TF Mobile",
     "description": "Retrained with Mobilenet_v1_1.0_224",
-    "model_file": "/android/models_tf_mobile.pb",
+    "model_file_path": "static\/models\/tf_mobile\/model.pb",
     "model_type": "tfmobile",
     "configuration": {
       "input_size": 224,
       "image_mean": 128,
       "image_std": 128,
-      "input_name": "Mul",
+      "input_name": "input",
       "output_name": "final_result_fruits"
     }
   },
   {
-    "id": 2,
+    "id": "2",
     "name": "TF Lite",
     "description": "Retrained with Mobilenet_v1_1.0_224",
-    "model_file": "/android/models_tf_lite.lite",
+    "model_file_path": "static\/models\/tf_lite\/model.lite",
     "model_type": "tflite",
     "configuration": {
       "input_size": 224,
       "image_mean": 128,
       "image_std": 128,
-      "input_name": "Mul",
+      "input_name": "input",
       "output_name": "final_result_fruits"
     }
   }

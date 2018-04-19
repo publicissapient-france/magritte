@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".home.VersionActivity"
+            android:name=".version.VersionActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,6 +36,9 @@
             android:name=".level.LevelActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".language.LanguageActivity" />
+        <activity
+            android:name=".classifier.lite.LiteCameraActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
