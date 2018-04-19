@@ -10,7 +10,8 @@ python -m scripts.retrain \
     --output_labels=output/"${CATEGORY}"/"${ARCHITECTURE}"/magritte_labels.txt \
     --summaries_dir=output/"${CATEGORY}"/"${ARCHITECTURE}"/training_summaries \
     --final_tensor_name=final_result_"${CATEGORY}" \
-    --how_many_training_steps=1000 \
+    --how_many_training_steps=3000 \
+    --learning_rate=0.005 \
     --random_crop=0 \
     --random_scale=0 \
     --random_brightness=0 \
