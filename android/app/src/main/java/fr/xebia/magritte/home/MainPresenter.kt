@@ -25,6 +25,7 @@ class MainPresenter(val view: MainContract.View,
     }
 
     override fun loadInitData(model: MagritteModel) {
+        // TODO add check if there is a model update
         if (!repository.getInitDataLoadingStatus()) {
             view.displayLoading()
             compositeDisposable.add(
