@@ -16,6 +16,7 @@
 
 package fr.xebia.magritte.classifier;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -62,6 +63,7 @@ import java.util.concurrent.TimeUnit;
 import fr.xebia.magritte.R;
 import timber.log.Timber;
 
+@SuppressLint("ValidFragment")
 public class CameraConnectionFragment extends Fragment {
 
     /**

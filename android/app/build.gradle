@@ -13,17 +13,27 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    signingConfigs {
+        release {
+            storeFile file("../magritte-release-key.keystore")
+            storePassword "ceci n'est pas une pomme"
+            keyAlias "magritte_release"
+            keyPassword "ceci n'est pas une pomme"
+        }
+    }
     buildTypes {
         debug {
             buildConfigField 'int', 'API_VERSION', '1'
-            buildConfigField "String", "API_ENDPOINT", "\"http://10.0.13.59:8080/\""
+            buildConfigField "String", "API_ENDPOINT", "\"http://d1abe010.ngrok.io/\""
             buildConfigField 'int', 'DB_VERSION', '1'
         }
         release {
+            signingConfig signingConfigs.release
             buildConfigField 'int', 'API_VERSION', '1'
-            buildConfigField "String", "API_ENDPOINT", "\"http://magritte.xebia.fr/\""
+            buildConfigField "String", "API_ENDPOINT", "\"http://d1abe010.ngrok.io/\""
             buildConfigField 'int', 'DB_VERSION', '1'
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
