@@ -38,6 +38,12 @@ TFLite uses a different serialization format from regular TensorFlow. TensorFlow
 $ ./magritte_convert_tf_lite.sh
 ```
 
+## toco workaround
+
+At the time of writing, toco is currently broken, in order to generate a working tflite graph, use `magritte_toco_workaround.sh` (This version currently working with non-quantized mobilenet models).
+
+Copy your retrained graph somewhere and launch the script in your tensorflow workspace.
+
 # References
 
 - [TensorFlow For Poets
