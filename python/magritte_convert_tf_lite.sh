@@ -11,5 +11,5 @@ toco \
   --input_array=input \
   --output_array=final_result_"${CATEGORY}" \
   --inference_input_type=FLOAT
-  --input_data_types=FLOAT
+  --input_data_type=FLOAT
   
