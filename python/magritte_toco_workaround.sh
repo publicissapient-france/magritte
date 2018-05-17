@@ -12,8 +12,12 @@ source "conf.sh"
 bazel run --config=opt \
   //tensorflow/contrib/lite/toco:toco -- \
   --input_file=/tmp/magritte_retrained_graph.pb \
-  --output_file=/tmp/magritte_optimized_graph.lite \
+  --output_file=/tmp/magritte_graph.tflite \
   --inference_type=FLOAT \
   --input_shape=1,224,224,3 \
   --input_array=input \
   --output_array=final_result_"${CATEGORY}" \
+  --mean_value=128 \
+  --std_value=128 \
+  --default_ranges_min=0 \
+  --default_ranges_max=6
