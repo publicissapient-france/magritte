@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "fr.xebia.magritte"
         minSdkVersion 21
@@ -72,7 +72,7 @@ dependencies {
 
     // tensorflow
     implementation 'org.tensorflow:tensorflow-android:1.6.0'
-    implementation 'org.tensorflow:tensorflow-lite:0.1.8-rc0'
+    implementation 'org.tensorflow:tensorflow-lite:1.10.0'
 
     // Room
     implementation "android.arch.persistence.room:runtime:$androidArchVersion"
