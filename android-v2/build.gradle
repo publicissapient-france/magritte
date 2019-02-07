@@ -8,7 +8,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.0'
+        classpath 'com.android.tools.build:gradle:3.3.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -29,7 +29,8 @@ task clean(type: Delete) {
 ext {
     cardViewVersion = "1.1.0-alpha01"
     appCompatVersion = "1.1.0-alpha01"
-    navigationVersion = "1.0.0-alpha09"
+    navigationVersion = "1.0.0-beta01"
     constraintLayoutVersion = "2.0.0-alpha3"
-    coreKTXVersion = "1.1.0-alpha03"
+    coreKTXVersion = "1.1.0-alpha04"
+    mlkitVersion = "17.0.3"
 }
